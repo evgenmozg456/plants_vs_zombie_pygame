@@ -5,10 +5,11 @@ class Plant(pygame.sprite.Sprite):
     def __init__(self, *group):
         super().__init__(*group)
         self.cost = 0  # стоимость
-        self.dmg = 0  # урон
+        self.dmg = 0  # урон ///// у базового зомби 500 хп, а горохострел наносит 50 дмг
         self.cd = 20  # перезарядка для выставления на поле
         self.speed = 0  # скорость действия (стрельба/выдача солнц)
         self.size = 90, 90  # размер
+        self.hp = 6  # hp /// количество укусов для удаления растения
 
     def update(self):
         pass
@@ -61,6 +62,7 @@ class Wallnut(Plant):
         self.rect = coords
         self.cd = 50
         self.cost = 50
+        self.hp = 30
 
 
 class Repeater(Plant):
