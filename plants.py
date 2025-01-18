@@ -1,27 +1,38 @@
 import pygame
 
+import os
+import sys
+
+pygame.init()
+
+
+def load_image(name, colorkey=None):
+    fullname = os.path.join('data', name)
+    if not os.path.isfile(fullname):
+        sys.exit()
+    image = pygame.image.load(fullname)
+    return image
+
 
 class Plant(pygame.sprite.Sprite):
     def __init__(self, *group):
         super().__init__(*group)
         self.cost = 0  # стоимость
-        self.dmg = 0  # урон ///// у базового зомби 500 хп, а горохострел наносит 50 дмг
+        self.dmg = 0  # урон
         self.cd = 20  # перезарядка для выставления на поле
         self.speed = 0  # скорость действия (стрельба/выдача солнц)
         self.size = 90, 90  # размер
-        self.hp = 6  # hp /// количество укусов для удаления растения
 
     def update(self):
         pass
 
 
 class Peashooter(Plant):
-    def __init__(self, coords: tuple, image: str, *group):
+    def __init__(self, *group):
         super().__init__(*group)
-        image = load_image(image)
+        image = load_image('plants/gorox_1.png')
         self.image = pygame.transform.scale(image, self.size)
         self.rect = self.image.get_rect()
-        self.coords = coords
         self.dmg = 50
         self.cost = 100
         self.speed = 10
@@ -43,58 +54,53 @@ class Peashooter(Plant):
 
 
 class Sunflower(Plant):
-    def __init__(self, coords: tuple, image: str, *group):
+    def __init__(self, *group):
         super().__init__(*group)
-        image = load_image(image)
+        image = load_image('plants/sunflower.png')
         self.image = pygame.transform.scale(image, self.size)
         self.rect = self.image.get_rect()
-        self.rect = coords
         self.cost = 50
         self.speed = 10
 
 
 class Wallnut(Plant):
-    def __init__(self, coords: tuple, image: str, *group):
+    def __init__(self, *group):
         super().__init__(*group)
-        image = load_image(image)
+        image = load_image('plants/orex.png')
         self.image = pygame.transform.scale(image, self.size)
         self.rect = self.image.get_rect()
-        self.rect = coords
         self.cd = 50
         self.cost = 50
-        self.hp = 30
 
 
 class Repeater(Plant):
-    def __init__(self, coords: tuple, image: str, *group):
+    def __init__(self, *group):
         super().__init__(*group)
-        image = load_image(image)
+        image = load_image('plants/gorox_2.png')
         self.image = pygame.transform.scale(image, self.size)
         self.rect = self.image.get_rect()
-        self.rect = coords
         self.cost = 200
         self.dmg = 50
         self.speed = 10
 
 
 class Cherrybomb(Plant):
-    def __init__(self, coords: tuple, image: str, *group):
+    def __init__(self, *group):
         super().__init__(*group)
-        image = load_image(image)
+        image = load_image('plants/cherry.png')
         self.image = pygame.transform.scale(image, self.size)
         self.rect = self.image.get_rect()
-        self.rect = coords
         self.cost = 150
         self.dmg = 600
         self.cd = 100
 
 
 class Potatomine(Plant):
-    def __init__(self, coords: tuple, image: str, *group):
+    def __init__(self, *group):
         super().__init__(*group)
-        image = load_image(image)
+        image = load_image('plants/potatomine.png')
         self.image = pygame.transform.scale(image, self.size)
         self.rect = self.image.get_rect()
-        self.rect = coords
         self.cost = 25
         self.dmg = 500
+
