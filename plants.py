@@ -103,3 +103,4 @@ class Potatomine(Plant):
         self.rect = self.image.get_rect()
         self.cost = 25
         self.dmg = 500
+
