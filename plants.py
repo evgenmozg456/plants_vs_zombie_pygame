@@ -28,13 +28,16 @@ class Plant(pygame.sprite.Sprite):
 
 
 class Peashooter(Plant):
-    def __init__(self, x, y, *group):
+    def __init__(self, x, y, card=False, *group):
         super().__init__(*group)
-        image = load_image('plants/gorox_1.png')
-        self.image = pygame.transform.scale(image, self.size)
+        if card:
+            self.image = pygame.image.load('cards/gorox_card.jpg').convert_alpha()
+        else:
+            self.image = pygame.image.load('plants/gorox_1.jpg').convert_alpha()
+        self.image = pygame.transform.scale(self.image, self.size)
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.topleft = (x, y)
+
 
         self.dmg = 50
         self.cost = 100
@@ -57,24 +60,31 @@ class Peashooter(Plant):
 
 
 class Sunflower(Plant):
-    def __init__(self, x, y, *group):
+    def __init__(self, x, y, card=False, *group):
         super().__init__(*group)
-        image = load_image('plants/sunflower.png')
-        self.image = pygame.transform.scale(image, self.size)
+        if card:
+            self.image = pygame.image.load('cards/podsolnux_card.jpg').convert_alpha()
+        else:
+            self.image = pygame.image.load('plants/sunflower.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, self.size)
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.topleft = (x, y)
+
         self.cost = 50
         self.speed = 10
 
 class Wallnut(Plant):
-    def __init__(self, x, y, *group):
+    def __init__(self, x, y, card=False, *group):
         super().__init__(*group)
-        image = load_image('plants/orex.png')
-        self.image = pygame.transform.scale(image, self.size)
+        if card:
+            self.image = pygame.image.load('cards/orex_card.jpg').convert_alpha()
+        else:
+            self.image = pygame.image.load('plants/orex.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, self.size)
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.topleft = (x, y)
+
+
         self.cd = 50
         self.cost = 50
 
@@ -82,37 +92,53 @@ class Wallnut(Plant):
 class Repeater(Plant):
     def __init__(self, x, y, *group):
         super().__init__(*group)
-        image = load_image('plants/gorox_2.png')
-        self.image = pygame.transform.scale(image, self.size)
+        self.image = pygame.image.load('plants/gorox_2.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, self.size)
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.topleft = (x, y)
+
+
         self.cost = 200
         self.dmg = 50
         self.speed = 10
 
 
 class Cherrybomb(Plant):
-    def __init__(self, x, y, *group):
+    def __init__(self, x, y, card=False, *group):
         super().__init__(*group)
-        image = load_image('plants/cherry.png')
-        self.image = pygame.transform.scale(image, self.size)
+        if card:
+            self.image = pygame.image.load('cards/cherrybomb_card.jpg').convert_alpha()
+        else:
+            self.image = pygame.image.load('plants/cherry.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, self.size)
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.topleft = (x, y)
+
+
         self.cost = 150
         self.dmg = 600
         self.cd = 100
 
 
 class Potatomine(Plant):
-    def __init__(self, x, y, *group):
+    def __init__(self, x, y, card=False, *group):
         super().__init__(*group)
-        image = load_image('plants/potatomine.png')
-        self.image = pygame.transform.scale(image, self.size)
+        if card:
+            self.image = pygame.image.load('cards/potatomine_card.jpg').convert_alpha()
+        else:
+            self.image = pygame.image.load('plants/potatomine.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, self.size)
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.topleft = (x, y)
+
         self.cost = 25
         self.dmg = 500
 
+
+class Shovel(pygame.sprite.Sprite):
+    def __init__(self, x, y, card=False, *group):
+        super().__init__(*group)
+        self.image = pygame.image.load('cards/lopata.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (100, 100))
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)

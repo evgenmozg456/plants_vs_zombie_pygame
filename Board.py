@@ -1,5 +1,5 @@
 import pygame
-from Plants import Plants
+from plants import *
 
 class Board(pygame.sprite.Sprite):
     # создание поля
@@ -21,11 +21,11 @@ class Board(pygame.sprite.Sprite):
         self.menu_sprites = pygame.sprite.Group()
 
         self.board = [[0] * width for _ in range(height)]
+
         self.sprites_menu = ['cards/podsolnux_card.jpg', 'cards/gorox_card.jpg', 'cards/potatomine_card.jpg',
                              'cards/orex_card.jpg', 'cards/cherrybomb_card.jpg', 'cards/lopata.png']  #  спрайты менюшки
-        self.sprites_plants = ["plants/sunflower.png", 'plants/gorox_1.jpg',
-                               'plants/potatomine.png', "plants/orex.png",
-                               "plants/cherry.png"]
+        self.plant_list_class = [Sunflower, Peashooter, Potatomine, Wallnut, Cherrybomb, Shovel]
+
         self.menu = [i for i in range(len(self.sprites_menu))]
 
         self.plants_choice = 0  # показывает какое растение выбрали
@@ -43,9 +43,11 @@ class Board(pygame.sprite.Sprite):
         self._init_menu()
 
     def _init_menu(self):
-        for i, menu_sprite in enumerate(self.sprites_menu):
-            menu = Plants(self.left + 100 * i, 0, menu_sprite)
-            self.menu_sprites.add(menu)
+        for i in range(len(self.sprites_menu)):
+            class_sprite = self.plant_list_class[i]
+            card_plant = class_sprite(self.left + 100 * i, 0, card=True)
+            self.menu_sprites.add(card_plant)
+
     def add_plant(self, plant):
         self.all_sprites_plants.add(plant)
 
@@ -143,8 +145,10 @@ class Board(pygame.sprite.Sprite):
                     if self.plants_choice > 0:
                         x = self.left + ax * self.cell_size
                         y = self.top + ay * self.cell_size
-                        plant = Plants(x, y, self.sprites_plants[self.plants_choice - 1])  # Создаем спрайт
-                        self.add_plant(plant)
+                        class_plant = self.plant_list_class[self.plants_choice - 1]
+                        plant = class_plant(x, y)
+                        self.all_sprites_plants.add(plant)
+                        self.plants_choice = 0
             return ay, ax
 
         if 0 <= ax <= 5 and 0 <= my // self.cell_size <= (self.height - 1):  # определяется какое растение выбрано
