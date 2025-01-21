@@ -28,11 +28,14 @@ class Plant(pygame.sprite.Sprite):
 
 
 class Peashooter(Plant):
-    def __init__(self, *group):
+    def __init__(self, x, y, *group):
         super().__init__(*group)
         image = load_image('plants/gorox_1.png')
         self.image = pygame.transform.scale(image, self.size)
         self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
         self.dmg = 50
         self.cost = 100
         self.speed = 10
@@ -54,52 +57,61 @@ class Peashooter(Plant):
 
 
 class Sunflower(Plant):
-    def __init__(self, *group):
+    def __init__(self, x, y, *group):
         super().__init__(*group)
         image = load_image('plants/sunflower.png')
         self.image = pygame.transform.scale(image, self.size)
         self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
         self.cost = 50
         self.speed = 10
 
-
 class Wallnut(Plant):
-    def __init__(self, *group):
+    def __init__(self, x, y, *group):
         super().__init__(*group)
         image = load_image('plants/orex.png')
         self.image = pygame.transform.scale(image, self.size)
         self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
         self.cd = 50
         self.cost = 50
 
 
 class Repeater(Plant):
-    def __init__(self, *group):
+    def __init__(self, x, y, *group):
         super().__init__(*group)
         image = load_image('plants/gorox_2.png')
         self.image = pygame.transform.scale(image, self.size)
         self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
         self.cost = 200
         self.dmg = 50
         self.speed = 10
 
 
 class Cherrybomb(Plant):
-    def __init__(self, *group):
+    def __init__(self, x, y, *group):
         super().__init__(*group)
         image = load_image('plants/cherry.png')
         self.image = pygame.transform.scale(image, self.size)
         self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
         self.cost = 150
         self.dmg = 600
         self.cd = 100
 
 
 class Potatomine(Plant):
-    def __init__(self, *group):
+    def __init__(self, x, y, *group):
         super().__init__(*group)
         image = load_image('plants/potatomine.png')
         self.image = pygame.transform.scale(image, self.size)
         self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
         self.cost = 25
         self.dmg = 500
