@@ -5,6 +5,8 @@ import pygame
 import os
 import sys
 
+import Board
+from Board import *
 
 def load_image(name: str):
     fullname = os.path.join('images_main_menu', name)
@@ -15,15 +17,16 @@ def load_image(name: str):
     image = pygame.image.load(fullname)
     return image
 
+
 class Button(pygame.sprite.Sprite):
-    def __init__(self, x, y, image, con, but_name,  *group):
+    def __init__(self, x, y, image, con, but_name, *group):
         super().__init__(*group)
         self.x = x
-        self.con = con # Состояние кнопки
+        self.con = con  # Состояние кнопки
         self.but_name = but_name
         self.y = y
         self.image = load_image(image)
-        self.image = pygame.transform.scale( self.image, (
+        self.image = pygame.transform.scale(self.image, (
             width, height))
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
@@ -39,35 +42,44 @@ class Button(pygame.sprite.Sprite):
             elif self.but_name == 'survival':
                 pass
             elif self.but_name == 'option':
-                # menu.kill()
                 # all_sprites.remove(survival_btn)
                 # all_sprites.remove(options_btn)
                 # all_sprites.remove(quit_btn)
-                # all_buttons.remove(survival_btn)
-                # all_buttons.remove(options_btn)
-                # all_buttons.remove(quit_btn)
                 # survival_btn.kill()
                 # options_btn.kill()
                 # quit_btn.kill()
-                self.kill_sprite(survival_btn)
-                self.kill_sprite(options_btn)
-                self.kill_sprite(quit_btn)
+                # self.kill_sprite(survival_btn)
+                # self.kill_sprite(options_btn)
+                # self.kill_sprite(quit_btn)
+
+                all_buttons.remove(survival_btn)
+                all_buttons.remove(options_btn)
+                all_buttons.remove(quit_btn)
+
                 screen.fill((0, 0, 0))
 
-                option_menu = Options(100, 0, 'options_menu.png', all_buttons, all_sprites)
-                options_ok_btn = Button(0, 0, 'option_ok_btn2.png', True, 'option_ok', all_buttons, all_sprites)
+                all_sprites.add(option_menu)
+                all_sprites.add(options_ok_btn)
+                all_buttons.add(options_ok_btn)
+
             elif self.but_name == 'option_ok':
-                # option_menu.kill()
-
                 screen.fill((0, 0, 0))
+                self.kill_sprite(option_menu)
+                self.kill_sprite(options_ok_btn)
 
-                # self.kill_sprite(option_menu)
+                all_buttons.add(survival_btn)
+                all_buttons.add(options_btn)
+                all_buttons.add(quit_btn)
+
+
+
     def kill_sprite(self, name):
         name.kill()
 
     def sound(self, sound: str):
         sound = pygame.mixer.Sound(sound)
         sound.play()
+
 
 # class Menu(pygame.sprite.Sprite):
 #     def __init__(self, name, screen, x, y, sound, colorkey=None):
@@ -179,7 +191,6 @@ class Options(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
 
-
         # screen.fill((0, 0, 0))
         # pygame.display.flip()
         # options_menu = load_image('options_menu.png')
@@ -199,10 +210,6 @@ if __name__ == '__main__':
     v = 500  # пикселей в секунду
     clock = pygame.time.Clock()
     running = True
-    # exp1 = Menu('menu.jpg', screen, 0, 0, 'sounds\mouse2.wav')
-    # # exp1.but()
-    # exp1.background()
-    # exp1.load_image('options.png')
 
     all_buttons = pygame.sprite.Group()
     all_sprites = pygame.sprite.Group()
@@ -210,17 +217,11 @@ if __name__ == '__main__':
 
     survival_btn = Button(0, 0, 'survival_button3.png', True, 'survival', all_buttons, all_sprites)
     quit_btn = Button(0, 0, 'quit_but1.png', True, 'exit', all_buttons, all_sprites)
-    options_btn = Button(0, 0, 'options_but1.png', True, 'option',  all_buttons, all_sprites)
-    menu = Button(0, 0, 'menu.jpg', False ,'',all_buttons, all_sprites)
-
-
-    # screen.blit(quit_btn, (0, 0))
-    # screen.blit(options_btn, (0, 0))
-
-    # screen.blit(self.options_but, (0, 0))
-    # screen.blit(self.quit_but, (0, 0))
-    # screen.blit(self.survival, (0, 0))
-    # back_ground_menu = Button
+    options_btn = Button(0, 0, 'options_but1.png', True, 'option', all_buttons, all_sprites)
+    menu = Button(0, 0, 'menu.jpg', False, '', all_buttons, all_sprites)
+    # меню настроек
+    option_menu = Options(100, 0, 'options_menu.png')
+    options_ok_btn = Button(0, 0, 'option_ok_btn2.png', True, 'option_ok')
 
     while running:
         for event in pygame.event.get():
