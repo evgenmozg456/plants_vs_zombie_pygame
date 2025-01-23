@@ -6,7 +6,6 @@ import os
 import sys
 
 import Board
-from Board import *
 
 def load_image(name: str):
     fullname = os.path.join('images_main_menu', name)
