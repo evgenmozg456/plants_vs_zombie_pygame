@@ -5,7 +5,6 @@ import pygame
 import os
 import sys
 
-import Board
 
 def load_image(name: str):
     fullname = os.path.join('images_main_menu', name)
