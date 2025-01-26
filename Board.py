@@ -1,12 +1,15 @@
+import random
+
 import pygame
 from plants import *
+from zombies import *
+
 
 class Board(pygame.sprite.Sprite):
     # создание поля
-    def __init__(self,size,  width, height, image_path, *groups):
+    def __init__(self, size, width, height, image_path, *groups):
         super().__init__(*groups)
         self.font = pygame.font.Font(None, 50)
-
 
         self.width = width
         self.height = height
@@ -17,13 +20,16 @@ class Board(pygame.sprite.Sprite):
 
         self.rect = self.image_pole.get_rect()
 
+        self.zombie_y = [100, 200, 300, 400, 500, 600]
+
         self.all_sprites_plants = pygame.sprite.Group()
+        self.all_sprites_zombie = pygame.sprite.Group()
         self.menu_sprites = pygame.sprite.Group()
 
         self.board = [[0] * width for _ in range(height)]
 
         self.sprites_menu = ['cards/podsolnux_card.jpg', 'cards/gorox_card.jpg', 'cards/potatomine_card.jpg',
-                             'cards/orex_card.jpg', 'cards/cherrybomb_card.jpg', 'cards/lopata.png']  #  спрайты менюшки
+                             'cards/orex_card.jpg', 'cards/cherrybomb_card.jpg', 'cards/lopata.png']  # спрайты менюшки
         self.plant_list_class = [Sunflower, Peashooter, Potatomine, Wallnut, Cherrybomb, Shovel]
 
         self.menu = [i for i in range(len(self.sprites_menu))]
@@ -45,7 +51,7 @@ class Board(pygame.sprite.Sprite):
     def _init_menu(self):
         for i in range(len(self.sprites_menu)):
             class_sprite = self.plant_list_class[i]
-            card_plant = class_sprite(self.left + 100 * i, 0, card=True)
+            card_plant = class_sprite(self.left + 100 * i, 0, card=True, zombie_group=self.all_sprites_zombie)
             self.menu_sprites.add(card_plant)
 
     def add_plant(self, plant):
@@ -92,9 +98,13 @@ class Board(pygame.sprite.Sprite):
                 pos_y = self.top + self.cell_size * i
                 # Рисуем сетку
                 pygame.draw.rect(screen, color, (pos_x, pos_y, self.cell_size, self.cell_size), 1)
-
         # Отображаем спрайты
         self.all_sprites_plants.draw(screen)
+        self.all_sprites_zombie.draw(screen)
+
+    def render_zombie(self, screen):
+        zombie = ZombieFirst(1900, random.choice(self.zombie_y), self.all_sprites_zombie, plants_group=self.all_sprites_plants)
+
 
     def handle_click(self, mouse_pos):
         # print(f"Клик по координатам: {mouse_pos}")
@@ -127,6 +137,7 @@ class Board(pygame.sprite.Sprite):
 
         # Если лопата не активна, пытаемся поставить растение
         self.get_click(mouse_pos)
+
     def get_click(self, mouse_pos):
         cell = self.get_cell(mouse_pos)
         return cell
@@ -138,7 +149,8 @@ class Board(pygame.sprite.Sprite):
         ay = (my - self.top) // self.cell_size
 
         if 0 <= ax <= (self.width - 1) and 0 <= ay <= (self.height - 1):  # считывается куда нажал игрок
-            if self.board[ay][ax] == 0 and self.sun > 0:  # проверка на растение(т.е если поле уже занято растением ничего не делает)
+            if self.board[ay][
+                ax] == 0 and self.sun > 0:  # проверка на растение(т.е если поле уже занято растением ничего не делает)
                 if self.economica(self.plants_choice):  # функция проверяет хавтает ли денег
                     self.board[ay][ax] = self.plants_choice
 
@@ -146,8 +158,9 @@ class Board(pygame.sprite.Sprite):
                         x = self.left + ax * self.cell_size
                         y = self.top + ay * self.cell_size
                         class_plant = self.plant_list_class[self.plants_choice - 1]
-                        plant = class_plant(x, y)
+                        plant = class_plant(x, y, zombie_group=self.all_sprites_zombie)
                         self.all_sprites_plants.add(plant)
+
                         self.plants_choice = 0
             return ay, ax
 
@@ -156,9 +169,6 @@ class Board(pygame.sprite.Sprite):
             return ax
         else:
             return None
-
-
-
 
 
 def main():
@@ -171,17 +181,16 @@ def main():
     screen = pygame.display.set_mode(size)
 
     pygame.mouse.set_visible(True)
-
     board = Board(size, 10, 6, pole_image)
     running = True
     last_score_time = pygame.time.get_ticks()
+    board.render_zombie(screen)
     while running:  # самый обычный игровой цикл
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # event.button == 1 - означает левую кнопку мыши
                 board.handle_click(event.pos)
-
         # if board.shovel_active:
         #     pygame.mouse.set_visible(False)
         # else:
@@ -190,13 +199,19 @@ def main():
         screen.fill((0, 0, 0))
         board.render(screen)
 
+
         current_time = pygame.time.get_ticks()
         if current_time - last_score_time >= 3000:  # конструкция которая даёт 25 солнышка раз в 3 секунды
             board.economica()
             last_score_time = current_time
+        board.all_sprites_zombie.update()
+        if current_time - last_score_time >= 10000:  # конструкция которая даёт 25 солнышка раз в 3 секунды
+            board.render_zombie(screen)
+            last_score_time = current_time
+        board.all_sprites_zombie.update()
+        board.all_sprites_plants.update()
         pygame.display.flip()
         clock.tick(60)  # счётчик кадрор (fps)
-
 
 
 if __name__ == '__main__':
