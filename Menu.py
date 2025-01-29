@@ -4,25 +4,25 @@ from msvcrt import kbhit
 import pygame
 import os
 import sys
+from load_image import load_image
 
-def load_image(name: str):
-    fullname = os.path.join('images_main_menu', name)
-    # если файл не существует, то выходим
-    if not os.path.isfile(fullname):
-        print(f"Файл с изображением '{fullname}' не найден")
-        sys.exit()
-    image = pygame.image.load(fullname)
-    return image
-
-
-class Button(pygame.sprite.Sprite):
-    def __init__(self, x, y, image, con, but_name, *group):
+class Background(pygame.sprite.Sprite):
+    def __init__(self, x, y, image, *group):
         super().__init__(*group)
         self.x = x
-        self.con = con  # Состояние кнопки
+        self.y = y
+        self.image = load_image('images_main_menu',image)
+        self.image = pygame.transform.scale(self.image, (
+            width, height))
+        self.rect = self.image.get_rect()
+
+class Button(pygame.sprite.Sprite):
+    def __init__(self, x, y, image,  but_name, *group):
+        super().__init__(*group)
+        self.x = x
         self.but_name = but_name
         self.y = y
-        self.image = load_image(image)
+        self.image = load_image('images_main_menu',image)
         self.image = pygame.transform.scale(self.image, (
             width, height))
         self.rect = self.image.get_rect()
@@ -30,7 +30,7 @@ class Button(pygame.sprite.Sprite):
 
     def update(self, pos):
         pos_in_mask = pos[0] - self.rect.x, pos[1] - self.rect.y
-        if self.rect.collidepoint(*pos) and self.mask.get_at(pos_in_mask) and self.con:
+        if self.rect.collidepoint(*pos) and self.mask.get_at(pos_in_mask):
             print("OK")
             self.sound('sounds\mouse2.wav')
             if self.but_name == 'exit':
@@ -39,13 +39,6 @@ class Button(pygame.sprite.Sprite):
             elif self.but_name == 'survival':
                 return 3
             elif self.but_name == 'option':
-                # survival_btn.kill()
-                # options_btn.kill()
-                # quit_btn.kill()
-                # self.kill_sprite(survival_btn)
-                # self.kill_sprite(options_btn)
-                # self.kill_sprite(quit_btn)
-
                 all_buttons.remove(survival_btn)
                 all_buttons.remove(options_btn)
                 all_buttons.remove(quit_btn)
@@ -82,13 +75,11 @@ class Options(pygame.sprite.Sprite):
         super().__init__(*group)
         self.x = x
         self.y = y
-        self.image = load_image(image)
+        self.image = load_image('images_main_menu', image)
         self.image = pygame.transform.scale(self.image, (
             width, height))
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
-
-
 
 
 size = width, height = 1280, 720
@@ -98,17 +89,19 @@ screen.fill((0, 0, 0))
 
 all_buttons = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
-survival_btn = Button(0, 0, 'survival_button3.png', True, 'survival', all_buttons, all_sprites)
-quit_btn = Button(0, 0, 'quit_but1.png', True, 'exit', all_buttons, all_sprites)
-options_btn = Button(0, 0, 'options_but1.png', True, 'option', all_buttons, all_sprites)
-menu = Button(0, 0, 'menu.jpg', False, '', all_buttons, all_sprites)
-        # меню настроек
+# кнопки
+survival_btn = Button(0, 0, 'survival_button3.png',  'survival', all_buttons, all_sprites)
+quit_btn = Button(0, 0, 'quit_but1.png',  'exit', all_buttons, all_sprites)
+options_btn = Button(0, 0, 'options_but1.png',  'option', all_buttons, all_sprites)
+
+# задний фон
+menu = Background(0, 0, 'menu.jpg', all_sprites)
+
+# меню настроек
 option_menu = Options(100, 0, 'options_menu.png')
-options_ok_btn = Button(0, 0, 'option_ok_btn2.png', True, 'option_ok')
+options_ok_btn = Button(0, 0, 'option_ok_btn2.png',  'option_ok')
 
 back = -1
-
-
 
 def launch_menu():
     # убрал проверку вызова

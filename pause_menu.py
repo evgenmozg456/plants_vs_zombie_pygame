@@ -3,16 +3,7 @@ from datetime import datetime
 import pygame
 import os
 import sys
-
-
-def load_image(name: str):
-    fullname = os.path.join('images_pause_menu', name)
-    # если файл не существует, то выходим
-    if not os.path.isfile(fullname):
-        print(f"Файл с изображением '{fullname}' не найден")
-        sys.exit()
-    image = pygame.image.load(fullname)
-    return image
+from load_image import load_image
 
 
 class Button(pygame.sprite.Sprite):
@@ -22,7 +13,7 @@ class Button(pygame.sprite.Sprite):
         self.con = con  # Состояние кнопки
         self.but_name = but_name
         self.y = y
-        self.image = load_image(image)
+        self.image = load_image('images_pause_menu', image)
         self.image = pygame.transform.scale(self.image, (
             int(width // 1.5), height))
         self.rect = self.image.get_rect()
@@ -65,7 +56,7 @@ class Options(pygame.sprite.Sprite):
         super().__init__(*group)
         self.x = x
         self.y = y
-        self.image = load_image(image)
+        self.image = load_image('images_pause_menu', image)
         self.image = pygame.transform.scale(self.image, (
             width, height))
         self.rect = self.image.get_rect()
