@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pygame
 import os
 import sys
@@ -22,7 +24,7 @@ class Button(pygame.sprite.Sprite):
         self.y = y
         self.image = load_image(image)
         self.image = pygame.transform.scale(self.image, (
-            width // 1.5, height))
+            int(width // 1.5), height))
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x = x
@@ -46,6 +48,7 @@ class Button(pygame.sprite.Sprite):
                 screen.fill((0, 0, 0))
             elif self.but_name == 'restart_level':
                 print('restart_level')
+                # pygame.time.wait(5000)
             elif self.but_name == 'main_menu':
                 print('main_menu')
 
@@ -55,6 +58,7 @@ class Button(pygame.sprite.Sprite):
     def sound(self, sound: str):
         sound = pygame.mixer.Sound(sound)
         sound.play()
+
 
 class Options(pygame.sprite.Sprite):
     def __init__(self, x, y, image, *group):
@@ -67,31 +71,37 @@ class Options(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
 
+
 def terminate():
     pygame.quit()
     sys.exit()
 
-if __name__ == '__main__':
-    pygame.init()
-    size = width, height = 1900, 800
-    screen = pygame.display.set_mode(size)
-    pygame.display.flip()
-    # pygame.mouse.set_visible(False)
-    screen.fill((0, 0, 0))
 
-    x_pos = 0
-    v = 500  # пикселей в секунду
-    clock = pygame.time.Clock()
+def pause_menu_fun():
+    pass
+
+
+size = width, height = 1900, 800
+screen = pygame.display.set_mode(size)
+# pygame.mouse.set_visible(False)
+screen.fill((0, 0, 0))
+
+all_buttons = pygame.sprite.Group()
+all_sprites = pygame.sprite.Group()
+# all_option_menu = pygame.sprite.Group()
+
+back_to_game_btn = Button(350, 0, 'back_to_game_pause_menu.png', True, 'back_to_game', all_buttons, all_sprites)
+main_menu_btn = Button(350, 0, 'main_menu_pause_menu.png', True, 'main_menu', all_buttons, all_sprites)
+restart_level_btn = Button(350, 0, 'restart_level_pause_menu.png', True, 'restart_level', all_buttons, all_sprites)
+pause_menu = Button(350, 0, 'pause_menu.png', False, '', all_buttons, all_sprites)
+
+
+def launch_pause_menu():
+    # if __name__ == '__main__':
+    pygame.init()
+
     running = True
 
-    all_buttons = pygame.sprite.Group()
-    all_sprites = pygame.sprite.Group()
-    # all_option_menu = pygame.sprite.Group()
-
-    back_to_game_btn = Button(350, 0, 'back_to_game_pause_menu.png', True, 'back_to_game', all_buttons, all_sprites)
-    main_menu_btn = Button(350, 0, 'main_menu_pause_menu.png', True, 'main_menu', all_buttons, all_sprites)
-    restart_level_btn = Button(350, 0, 'restart_level_pause_menu.png', True, 'restart_level', all_buttons, all_sprites)
-    pause_menu = Button(350, 0, 'pause_menu.png', False, '', all_buttons, all_sprites)
     # # меню настроек
     # option_menu = Options(100, 0, 'options_menu.png')
     # options_ok_btn = Button(0, 0, 'option_ok_btn2.png', True, 'option_ok')
@@ -106,3 +116,4 @@ if __name__ == '__main__':
         pygame.display.flip()
 
     pygame.quit()
+launch_pause_menu()
