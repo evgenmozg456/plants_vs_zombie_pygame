@@ -37,7 +37,7 @@ class Button(pygame.sprite.Sprite):
                 # return 0
                 terminate()
             elif self.but_name == 'survival':
-                return 3
+                return test(3)
             elif self.but_name == 'option':
                 all_buttons.remove(survival_btn)
                 all_buttons.remove(options_btn)
@@ -102,6 +102,10 @@ option_menu = Options(100, 0, 'options_menu.png')
 options_ok_btn = Button(0, 0, 'option_ok_btn2.png',  'option_ok')
 
 back = -1
+def test(num):
+    global back
+    back = num
+    print(back)
 
 def launch_menu():
     # убрал проверку вызова
@@ -116,16 +120,11 @@ def launch_menu():
                 terminate()
                 # running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                z = all_buttons.update(pygame.mouse.get_pos())
-                print(z)
-                if z == 3:
-                    running = False
-                    return 3
+                all_buttons.update(pygame.mouse.get_pos())
+                print(back)
             all_sprites.draw(screen)
         pygame.display.flip()
 
     pygame.quit()
-    print(back)
-    # return back
 
 xx = launch_menu()

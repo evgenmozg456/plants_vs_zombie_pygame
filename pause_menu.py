@@ -107,4 +107,4 @@ def launch_pause_menu():
     pygame.quit()
 
 
-launch_pause_menu()
+# launch_pause_menu()
