@@ -5,7 +5,6 @@ import os
 import sys
 from load_image import load_image
 
-
 class Pause_Menu_bg(pygame.sprite.Sprite):
     def __init__(self, x, y, image, *group):
         super().__init__(*group)
@@ -49,7 +48,9 @@ class Button(pygame.sprite.Sprite):
                 all_buttons_pause_menu.remove(main_menu_btn)
                 all_buttons_pause_menu.remove(restart_level_btn)
                 all_buttons_pause_menu.remove(pause_menu)
+
                 screen.fill((0, 0, 0))
+                return 1
             elif self.but_name == 'restart_level':
                 print('restart_level')
                 # pygame.time.wait(5000)
@@ -91,7 +92,7 @@ restart_level_btn = Button(350, 0, 'restart_level_pause_menu.png', True, 'restar
 
 def launch_pause_menu():
     # if __name__ == '__main__':
-    pygame.init()
+    # pygame.init()
 
     running = True
 
@@ -103,8 +104,8 @@ def launch_pause_menu():
                 all_buttons_pause_menu.update(pygame.mouse.get_pos())
             all_sprites_pause_menu.draw(screen)
         pygame.display.flip()
-
-    pygame.quit()
+    return 1
+    # pygame.quit()
 
 
 # launch_pause_menu()
