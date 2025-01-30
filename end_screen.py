@@ -34,7 +34,7 @@ end_screen_sprite = pygame.sprite.Group()
 
 
 # окно конца игры
-pause_menu = EndScreen(0, 0, 'end_game.png', end_screen_sprite)
+pause_menu = EndScreen(0, 0, 'end_screen.png', end_screen_sprite)
 
 
 
