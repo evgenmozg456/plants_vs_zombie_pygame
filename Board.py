@@ -3,10 +3,11 @@ from plants import *
 
 class Board(pygame.sprite.Sprite):
     # создание поля
-    def __init__(self,size,  width, height, image_path, *groups):
+    def __init__(self, size,  width, height, image_path, *groups):
         super().__init__(*groups)
         self.font = pygame.font.Font(None, 50)
 
+        self.cooldowns = {}
 
         self.width = width
         self.height = height
@@ -17,19 +18,20 @@ class Board(pygame.sprite.Sprite):
 
         self.rect = self.image_pole.get_rect()
 
-        self.all_sprites_plants = pygame.sprite.Group()
-        self.menu_sprites = pygame.sprite.Group()
+        self.all_sprites_plants = pygame.sprite.Group()  # группа спрайтов растений
+        self.menu_sprites = pygame.sprite.Group()  # группа спрайтов менюшки
 
         self.board = [[0] * width for _ in range(height)]
 
         self.sprites_menu = ['cards/podsolnux_card.jpg', 'cards/gorox_card.jpg', 'cards/potatomine_card.jpg',
                              'cards/orex_card.jpg', 'cards/cherrybomb_card.jpg', 'cards/lopata.png']  #  спрайты менюшки
-        self.plant_list_class = [Sunflower, Peashooter, Potatomine, Wallnut, Cherrybomb, Shovel]
+        self.plant_list_class = [Sunflower, Peashooter, Potatomine, Wallnut, Cherrybomb]
 
         self.menu = [i for i in range(len(self.sprites_menu))]
 
         self.plants_choice = 0  # показывает какое растение выбрали
         self.sun = 10000  # начальное кол-во солнышек
+
 
         # значения по умолчанию
         self.left = 350
@@ -40,13 +42,22 @@ class Board(pygame.sprite.Sprite):
         self.shovel_active = False
         self.shovel_rect = pygame.Rect(850, 0, 100, 100)
 
+        self.cooldown = {i + 1: 0 for i in range(len(self.sprites_menu) - 1)}  # словарь для кулдауна всех растений
+        self.cooldown_time = 3000  # время перезарядки
+        #
+        self.lock_image = pygame.image.load('cards/zamok.png').convert_alpha()
+        self.lock_image = pygame.transform.scale(self.lock_image, (50, 50))
+
         self._init_menu()
 
     def _init_menu(self):
-        for i in range(len(self.sprites_menu)):
+        for i in range(len(self.sprites_menu) - 1):
             class_sprite = self.plant_list_class[i]
             card_plant = class_sprite(self.left + 100 * i, 0, card=True)
             self.menu_sprites.add(card_plant)
+        card_plant = Shovel(self.left + 100 * (len(self.sprites_menu) - 1), 0, card=True)
+        self.menu_sprites.add(card_plant)
+
 
     def add_plant(self, plant):
         self.all_sprites_plants.add(plant)
@@ -57,8 +68,8 @@ class Board(pygame.sprite.Sprite):
         self.top = top
         self.cell_size = cell_size
 
-    def economica(self, plant=0):
-        if plant == 0:
+    def economica(self, plant=-1):
+        if plant == -1:
             self.sun += 25
         else:
             costs = [0, 50, 100, 25, 50, 150]
@@ -81,10 +92,18 @@ class Board(pygame.sprite.Sprite):
         if self.shovel_active:
             pygame.mouse.set_visible(False)
             mx, my = pygame.mouse.get_pos()
-            screen.blit(self.shovel_image, (mx - self.shovel_rect.width // 2, my - self.shovel_rect.height // 2))
+            screen.blit(self.shovel_image, (mx - self.shovel_rect.width // 90, my - self.shovel_rect.height * 2.2))
         else:
             # Если лопата не активна, показываем стандартный курсор
             pygame.mouse.set_visible(True)
+
+        # отрисовка замка
+        current_time = pygame.time.get_ticks()
+        for i in range(len(self.sprites_menu) - 1):
+            if current_time - self.cooldown[i + 1] < self.cooldown_time:
+                x = self.left + 100 * i + 25
+                y = 25
+                screen.blit(self.lock_image, (x, y))
 
         for j in range(self.width):
             for i in range(self.height):
@@ -127,6 +146,7 @@ class Board(pygame.sprite.Sprite):
 
         # Если лопата не активна, пытаемся поставить растение
         self.get_click(mouse_pos)
+
     def get_click(self, mouse_pos):
         cell = self.get_cell(mouse_pos)
         return cell
@@ -151,14 +171,16 @@ class Board(pygame.sprite.Sprite):
                         self.plants_choice = 0
             return ay, ax
 
-        if 0 <= ax <= 5 and 0 <= my // self.cell_size <= (self.height - 1):  # определяется какое растение выбрано
-            self.plants_choice = ax + 1  # выбор растени из вверхней панели
+        if 0 <= ax < len(self.sprites_menu) - 1 and 0 <= my < self.cell_size:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.cooldown[ax + 1] >= self.cooldown_time:  # Проверяем перезарядку
+                self.plants_choice = ax + 1
+                self.cooldown[ax + 1] = current_time  # Записываем время выбора
             return ax
-        else:
-            return None
+        return None
 
-
-
+    def esc(self):
+        pass
 
 
 def main():
@@ -170,7 +192,7 @@ def main():
     size = 1900, 800
     screen = pygame.display.set_mode(size)
 
-    pygame.mouse.set_visible(True)
+    # pygame.mouse.set_visible(True)
 
     board = Board(size, 10, 6, pole_image)
     running = True
@@ -192,11 +214,10 @@ def main():
 
         current_time = pygame.time.get_ticks()
         if current_time - last_score_time >= 3000:  # конструкция которая даёт 25 солнышка раз в 3 секунды
-            board.economica()
+            board.economica(-1)
             last_score_time = current_time
         pygame.display.flip()
         clock.tick(60)  # счётчик кадрор (fps)
-
 
 
 if __name__ == '__main__':

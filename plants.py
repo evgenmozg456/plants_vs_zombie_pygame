@@ -21,7 +21,7 @@ class Plant(pygame.sprite.Sprite):
         self.dmg = 0  # урон
         self.cd = 20  # перезарядка для выставления на поле
         self.speed = 0  # скорость действия (стрельба/выдача солнц)
-        self.size = 90, 90  # размер
+        self.size = 100, 100  # размер
 
     def update(self):
         pass
@@ -42,6 +42,11 @@ class Peashooter(Plant):
         self.dmg = 50
         self.cost = 100
         self.speed = 10
+
+
+    def cost_plant(self):
+        return self.cost
+
 
     # def update(self, shooting=True):
     #     peea = Pea(self.coords, all_sprites) //////не работает
@@ -138,7 +143,10 @@ class Potatomine(Plant):
 class Shovel(pygame.sprite.Sprite):
     def __init__(self, x, y, card=False, *group):
         super().__init__(*group)
-        self.image = pygame.image.load('cards/lopata.png').convert_alpha()
+        if card:
+            self.image = pygame.image.load('cards/shovel_card.jpg').convert_alpha()
+        else:
+            self.image = pygame.image.load('cards/lopata.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (100, 100))
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
