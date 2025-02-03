@@ -22,6 +22,7 @@ def launch_project():
         # открытие главного меню Menu.py
         if condition == 1:
             condition = launch_menu()
+
         # открытие основной игры Board.py
         elif condition == 2:
             condition = main()

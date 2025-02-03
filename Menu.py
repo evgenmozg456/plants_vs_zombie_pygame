@@ -114,6 +114,9 @@ running = True
 
 def launch_menu():
     global running
+    # фоновый звук главного меню
+    sound_menu = pygame.mixer.Sound('sounds\menu_sound_back.wav')
+    sound_menu.play(loops = -1)
     # убрал проверку вызова
     # if __name__ == '__main__':
     running = True
@@ -129,6 +132,7 @@ def launch_menu():
         pygame.display.flip()
 
     # вызов основной игры Board.py
+    sound_menu.set_volume(0)
     return 2
     # pygame.quit()
 
