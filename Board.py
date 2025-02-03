@@ -1,9 +1,12 @@
 import pygame
 from plants import *
+from zombies import *
+import random
+
 
 class Board(pygame.sprite.Sprite):
     # создание поля
-    def __init__(self, size,  width, height, image_path, *groups):
+    def __init__(self, size, width, height, image_path, *groups):
         super().__init__(*groups)
         self.font = pygame.font.Font(None, 50)
 
@@ -25,18 +28,16 @@ class Board(pygame.sprite.Sprite):
         self.all_sprites_pea = pygame.sprite.Group()
         self.menu_sprites = pygame.sprite.Group()
 
-
         self.board = [[0] * width for _ in range(height)]
 
         self.sprites_menu = ['cards/podsolnux_card.jpg', 'cards/gorox_card.jpg', 'cards/potatomine_card.jpg',
-                             'cards/orex_card.jpg', 'cards/cherrybomb_card.jpg', 'cards/lopata.png']  #  спрайты менюшки
+                             'cards/orex_card.jpg', 'cards/cherrybomb_card.jpg', 'cards/lopata.png']  # спрайты менюшки
         self.plant_list_class = [Sunflower, Peashooter, Potatomine, Wallnut, Cherrybomb]
 
         self.menu = [i for i in range(len(self.sprites_menu))]
 
         self.plants_choice = 0  # показывает какое растение выбрали
         self.sun = 10000  # начальное кол-во солнышек
-
 
         # значения по умолчанию
         self.left = 350
@@ -64,7 +65,6 @@ class Board(pygame.sprite.Sprite):
             self.menu_sprites.add(card_plant)
         card_plant = Shovel(self.left + 100 * (len(self.sprites_menu) - 1), 0, card=True)
         self.menu_sprites.add(card_plant)
-
 
     def add_plant(self, plant):
         self.all_sprites_plants.add(plant)
@@ -124,8 +124,7 @@ class Board(pygame.sprite.Sprite):
         self.all_sprites_zombie.draw(screen)
         self.all_sprites_pea.draw(screen)
 
-
-    def render_zombie(self, screen):
+    def render_zombie(self):
         zombie = ZombieFirst(1900, random.choice(self.zombie_y), self.all_sprites_zombie,
                              plants_group=self.all_sprites_plants, pea_group=self.all_sprites_pea)
 
@@ -172,7 +171,8 @@ class Board(pygame.sprite.Sprite):
         ay = (my - self.top) // self.cell_size
 
         if 0 <= ax <= (self.width - 1) and 0 <= ay <= (self.height - 1):  # считывается куда нажал игрок
-            if self.board[ay][ax] == 0 and self.sun > 0:  # проверка на растение(т.е если поле уже занято растением ничего не делает)
+            if self.board[ay][
+                ax] == 0 and self.sun > 0:  # проверка на растение(т.е если поле уже занято растением ничего не делает)
                 if self.economica(self.plants_choice):  # функция проверяет хавтает ли денег
                     self.board[ay][ax] = self.plants_choice
 
@@ -211,6 +211,7 @@ def main():
     board = Board(size, 10, 6, pole_image)
     running = True
     last_score_time = pygame.time.get_ticks()
+    board.render_zombie()
     while running:  # самый обычный игровой цикл
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -229,6 +230,9 @@ def main():
         current_time = pygame.time.get_ticks()
         if current_time - last_score_time >= 3000:  # конструкция которая даёт 25 солнышка раз в 3 секунды
             board.economica(-1)
+            last_score_time = current_time
+        if current_time - last_score_time >= 3000:  # конструкция которая даёт 25 солнышка раз в 3 секунды
+            board.render_zombie()
             last_score_time = current_time
         board.all_sprites_zombie.update()
         board.all_sprites_plants.update()
