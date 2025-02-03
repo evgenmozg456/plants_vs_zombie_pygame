@@ -21,7 +21,7 @@ class Plant(pygame.sprite.Sprite):
         self.dmg = 0  # урон
         self.cd = 20  # перезарядка для выставления на поле
         self.speed = 0  # скорость действия (стрельба/выдача солнц)
-        self.size = 90, 90  # размер
+        self.size = 100, 100  # размер
 
     def update(self):
         pass
@@ -43,10 +43,12 @@ class Peashooter(Plant):
         self.mask = pygame.mask.from_surface(self.image)
         self.zombie_group = zombie_group
         self.rect.topleft = (x, y)
+
+
         self.dmg = 50
         self.cost = 100
         self.speed = 10
-        self.hp = 6
+
 
     def update(self):
         for zombie in self.zombie_group:
@@ -63,6 +65,9 @@ class Peashooter(Plant):
 
     def render_pea(self):
         pea = Pea(self.rect.x + self.size[0], self.rect.y, self.zombie_group, self.pea_group)
+
+    def cost_plant(self):
+        return self.cost
 
 
 class Pea(pygame.sprite.Sprite):
@@ -88,7 +93,8 @@ class Pea(pygame.sprite.Sprite):
 
 
 class Sunflower(Plant):
-    def __init__(self, x, y, card=False, *group, zombie_group, pea_group):
+    def __init__(self, x, y, card=False, *group):
+
         super().__init__(*group)
         if card:
             self.image = pygame.image.load('cards/podsolnux_card.jpg').convert_alpha()
@@ -96,11 +102,12 @@ class Sunflower(Plant):
             self.image = pygame.image.load('plants/sunflower.png').convert_alpha()
         self.pea_group = pea_group
         self.image = pygame.transform.scale(self.image, self.size)
+
         self.last_score_time1 = pygame.time.get_ticks()
         self.zombie_group = zombie_group
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
-        self.last_score_time = pygame.time.get_ticks()
+
         self.cost = 50
         self.speed = 10
         self.hp = 6
@@ -143,7 +150,7 @@ class Sun(pygame.sprite.Sprite):
                     self.kill()
 
 class Wallnut(Plant):
-    def __init__(self, x, y, card=False, *group, zombie_group, pea_group):
+    def __init__(self, x, y, card=False, *group):
         super().__init__(*group)
         if card:
             self.image = pygame.image.load('cards/orex_card.jpg').convert_alpha()
@@ -157,8 +164,6 @@ class Wallnut(Plant):
         self.rect.y = y
         self.cd = 50
         self.cost = 50
-        self.hp = 50
-
     def update(self):
         for zombie in self.zombie_group:
             if pygame.sprite.collide_mask(self, zombie):
@@ -200,8 +205,9 @@ class Cherrybomb(Plant):
             last_score_time = current_time
 
 
+
 class Potatomine(Plant):
-    def __init__(self, x, y, card=False, *group, zombie_group, pea_group):
+    def __init__(self, x, y, card=False, *group):
         super().__init__(*group)
         if card:
             self.image = pygame.image.load('cards/potatomine_card.jpg').convert_alpha()
@@ -221,6 +227,7 @@ class Potatomine(Plant):
         self.active = True
 
 
+
     def update(self):
         zombies = []
         for zomb in self.zombie_group:
@@ -238,17 +245,13 @@ class Potatomine(Plant):
                 zomb.kill()
 
 
-        # if not zombies:
-
-        # if pygame.sprite.spritecollideany(self, self.zombie_group):
-
-
-
-
 class Shovel(pygame.sprite.Sprite):
-    def __init__(self, x, y, card=False, *group, zombie_group, pea_group):
+    def __init__(self, x, y, card=False, *group):
         super().__init__(*group)
-        self.image = pygame.image.load('cards/lopata.png').convert_alpha()
+        if card:
+            self.image = pygame.image.load('cards/shovel_card.jpg').convert_alpha()
+        else:
+            self.image = pygame.image.load('cards/lopata.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, (100, 100))
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
