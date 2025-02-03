@@ -1,7 +1,7 @@
 import pygame
 from plants import *
 from zombies import *
-import random
+from random import randint, choice
 
 
 class Board(pygame.sprite.Sprite):
@@ -125,8 +125,8 @@ class Board(pygame.sprite.Sprite):
         self.all_sprites_pea.draw(screen)
 
     def render_zombie(self):
-        zombie = ZombieFirst(1900, random.choice(self.zombie_y), self.all_sprites_zombie,
-                             plants_group=self.all_sprites_plants, pea_group=self.all_sprites_pea)
+        zombie = ZombieFirst(randint(1900, 2500), choice(self.zombie_y), self.all_sprites_zombie,
+                        plants_group=self.all_sprites_plants, pea_group=self.all_sprites_pea)
 
     def handle_click(self, mouse_pos):
         # print(f"Клик по координатам: {mouse_pos}")
@@ -211,7 +211,7 @@ def main():
     board = Board(size, 10, 6, pole_image)
     running = True
     last_score_time = pygame.time.get_ticks()
-    board.render_zombie()
+    last_zombie_time = pygame.time.get_ticks()
     while running:  # самый обычный игровой цикл
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -231,9 +231,12 @@ def main():
         if current_time - last_score_time >= 3000:  # конструкция которая даёт 25 солнышка раз в 3 секунды
             board.economica(-1)
             last_score_time = current_time
-        if current_time - last_score_time >= 3000:  # конструкция которая даёт 25 солнышка раз в 3 секунды
-            board.render_zombie()
-            last_score_time = current_time
+        zombie_time = pygame.time.get_ticks()
+        if zombie_time - last_zombie_time >= 30000:  # конструкция которая даёт 25 солнышка раз в 3 секунды
+            number_zombies = randint(3, 10)
+            for _ in range(number_zombies):
+                board.render_zombie()
+            last_zombie_time = zombie_time
         board.all_sprites_zombie.update()
         board.all_sprites_plants.update()
         board.all_sprites_pea.update()
