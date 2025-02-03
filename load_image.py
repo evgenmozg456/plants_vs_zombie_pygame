@@ -5,9 +5,8 @@ import pygame
 
 pygame.init()
 
-#  функции теперь нужно передавать путь и название файла
-def load_image(way, name, colorkey=None):
-    fullname = os.path.join(way, name)
+def load_image(name, colorkey=None):
+    fullname = os.path.join(name)
     if not os.path.isfile(fullname):
         sys.exit()
     image = pygame.image.load(fullname)
