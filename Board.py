@@ -300,7 +300,7 @@ def main():
                 board.economica(-1)
                 last_score_time = current_time
             zombie_time = pygame.time.get_ticks()
-            if zombie_time - last_zombie_time >= 1000:  # конструкция которая даёт 25 солнышка раз в 3 секунды
+            if zombie_time - last_zombie_time >= 30000:
                 number_zombies = randint(3, 10)
                 len_zombie_group += number_zombies
                 for _ in range(number_zombies):
