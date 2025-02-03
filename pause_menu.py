@@ -37,6 +37,9 @@ class Button(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
+        self.back_to_game_con = False
+        self.to_main_menu = False
+
     def update(self, pos):
         # проверка клика по кнопке
         pos_in_mask = pos[0] - self.rect.x, pos[1] - self.rect.y
@@ -54,6 +57,7 @@ class Button(pygame.sprite.Sprite):
                 all_buttons_pause_menu.remove(main_menu_btn)
                 all_buttons_pause_menu.remove(restart_level_btn)
                 all_buttons_pause_menu.remove(pause_menu)
+                self.back_to_game_con = True
 
                 screen.fill((0, 0, 0))
                 # return 1
@@ -62,6 +66,7 @@ class Button(pygame.sprite.Sprite):
                 print('restart_level')
             # выход в главное меню
             elif self.but_name == 'main_menu':
+                self.to_main_menu = True
                 print('main_menu')
 
     def sound(self, sound: str):
@@ -74,42 +79,38 @@ def terminate():
     sys.exit()
 
 
+
 size = width, height = 1900, 800
 screen = pygame.display.set_mode(size)
-# pygame.mouse.set_visible(False)
-screen.fill((0, 0, 0))
 
 all_buttons_pause_menu = pygame.sprite.Group()
 all_sprites_pause_menu = pygame.sprite.Group()
 
 # окно паузы
-pause_menu = Pause_Menu_bg(350, 0, 'pause_menu.png', all_sprites_pause_menu)
+pause_menu = Pause_Menu_bg(350, 0, 'pause_menu.png')
 
 # кнопки паузы
-back_to_game_btn = Button(350, 0, 'back_to_game_pause_menu.png', True, 'back_to_game', all_buttons_pause_menu,
-                          all_sprites_pause_menu)
-main_menu_btn = Button(350, 0, 'main_menu_pause_menu.png', True, 'main_menu', all_buttons_pause_menu,
-                       all_sprites_pause_menu)
-restart_level_btn = Button(350, 0, 'restart_level_pause_menu.png', True, 'restart_level', all_buttons_pause_menu,
-                           all_sprites_pause_menu)
+back_to_game_btn = Button(350, 0, 'back_to_game_pause_menu.png', True, 'back_to_game')
+main_menu_btn = Button(350, 0, 'main_menu_pause_menu.png', True, 'main_menu')
+restart_level_btn = Button(350, 0, 'restart_level_pause_menu.png', True, 'restart_level')
 
 
-def launch_pause_menu():
-    # if __name__ == '__main__':
-    pygame.init()
 
-    running = True
-
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                terminate()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                all_buttons_pause_menu.update(pygame.mouse.get_pos())
-            all_sprites_pause_menu.draw(screen)
-        pygame.display.flip()
-    return 1
-    # pygame.quit()
-
-
+# def launch_pause_menu():
+#     # if __name__ == '__main__':
+#     pygame.init()
+#     running = True
+#
+#     while running:
+#         for event in pygame.event.get():
+#             if event.type == pygame.QUIT:
+#                 terminate()
+#             if event.type == pygame.MOUSEBUTTONDOWN:
+#                 all_buttons_pause_menu.update(pygame.mouse.get_pos())
+#             all_sprites_pause_menu.draw(screen)
+#         pygame.display.flip()
+#     return 1
+#     pygame.quit()
+#
+#
 # launch_pause_menu()

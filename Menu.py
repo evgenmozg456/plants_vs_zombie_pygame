@@ -44,6 +44,7 @@ class Button(pygame.sprite.Sprite):
             # если клик по survival, то выходим из цикла и запускаем Board.py
             elif self.but_name == 'survival':
                 running = False
+
             #  удаление кнопок меню и открытие настроек
             elif self.but_name == 'option':
                 all_buttons.remove(survival_btn)

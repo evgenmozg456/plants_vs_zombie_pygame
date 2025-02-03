@@ -3,6 +3,11 @@ from plants import *
 from zombies import *
 import random
 
+from load_image import load_image
+
+from pause_menu import all_sprites_pause_menu, all_buttons_pause_menu, pause_menu, \
+    back_to_game_btn, main_menu_btn, restart_level_btn
+
 
 class Board(pygame.sprite.Sprite):
     # создание поля
@@ -105,6 +110,7 @@ class Board(pygame.sprite.Sprite):
             pygame.mouse.set_visible(True)
 
         # отрисовка замка
+
         current_time = pygame.time.get_ticks()
         for i in range(len(self.sprites_menu) - 1):
             if current_time - self.cooldown[i + 1] < self.cooldown_time:
@@ -193,8 +199,18 @@ class Board(pygame.sprite.Sprite):
             return ax
         return None
 
-    def esc(self):
-        pass
+    def space(self, change_pause):
+        if change_pause:
+            all_sprites_pause_menu.add(pause_menu)
+            all_sprites_pause_menu.add(back_to_game_btn)
+            all_sprites_pause_menu.add(main_menu_btn)
+            all_sprites_pause_menu.add(restart_level_btn)
+
+            all_buttons_pause_menu.add(back_to_game_btn)
+            all_buttons_pause_menu.add(main_menu_btn)
+            all_buttons_pause_menu.add(restart_level_btn)
+            change_pause = False
+            return change_pause
 
 
 def main():
@@ -202,7 +218,8 @@ def main():
     sound_menu.load('sounds\zombies_coming.wav')
     sound_menu.play()
 
-    pygame.init()
+    # удалите инициализацию, она есть в starting_file
+    # pygame.init()
     clock = pygame.time.Clock()
     pygame.display.set_caption('Игровое поле')
     pole_image = 'pole.jpg'
@@ -210,13 +227,15 @@ def main():
     size = 1900, 800
     screen = pygame.display.set_mode(size)
 
-    # pygame.mouse.set_visible(True)
+    pygame.mouse.set_visible(True)
 
     board = Board(size, 10, 6, pole_image)
     running = True
+    change_pause = True
     last_score_time = pygame.time.get_ticks()
     board.render_zombie()
     while running:  # самый обычный игровой цикл
+        # проверка, что звука нет и надо вкл его
         if not pygame.mixer.music.get_busy():
             sound_menu.load('sounds/background_game.wav')
             sound_menu.play()
@@ -224,27 +243,72 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # event.button == 1 - означает левую кнопку мыши
-                board.handle_click(event.pos)
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                # event.button == 1 - означает левую кнопку мыши
+                if not change_pause:
+                    all_buttons_pause_menu.update(pygame.mouse.get_pos())
+                else:
+                    board.handle_click(event.pos)
 
-        # if board.shovel_active:
-        #     pygame.mouse.set_visible(False)
-        # else:
-        #     pygame.mouse.set_visible(True)
+            if event.type == pygame.KEYDOWN:
+                # пробел вызывает паузу
+                if event.key == pygame.K_SPACE:
+                    change_pause = board.space(change_pause)
+                # esc вызывает проигрыш
+                if event.key == pygame.K_ESCAPE:
+                    sound_menu.pause()
+                    return 4
+            # если нажали на main menu то возвращаемся обратно в главное меню
+            if main_menu_btn.to_main_menu:
+                main_menu_btn.to_main_menu = False
+                all_sprites_pause_menu.remove(pause_menu)
+                all_sprites_pause_menu.remove(back_to_game_btn)
+                all_sprites_pause_menu.remove(main_menu_btn)
+                all_sprites_pause_menu.remove(restart_level_btn)
+
+                all_buttons_pause_menu.remove(back_to_game_btn)
+                all_buttons_pause_menu.remove(main_menu_btn)
+                all_buttons_pause_menu.remove(restart_level_btn)
+                # change_pause = True
+                back_to_game_btn.back_to_game_con = False
+                sound_menu.pause()
+                return 1
+            # если нажали на back to game то возвращаемся обратно к игре
+            if back_to_game_btn.back_to_game_con:
+                all_sprites_pause_menu.remove(pause_menu)
+                all_sprites_pause_menu.remove(back_to_game_btn)
+                all_sprites_pause_menu.remove(main_menu_btn)
+                all_sprites_pause_menu.remove(restart_level_btn)
+
+                all_buttons_pause_menu.remove(back_to_game_btn)
+                all_buttons_pause_menu.remove(main_menu_btn)
+                all_buttons_pause_menu.remove(restart_level_btn)
+                change_pause = True
+                back_to_game_btn.back_to_game_con = False
+
+            # if board.shovel_active:
+            #     pygame.mouse.set_visible(False)
+            # else:
+            #     pygame.mouse.set_visible(True)
 
         screen.fill((0, 0, 0))
         board.render(screen)
+        # если вызванно меню паузы, то не обновляем ничего
+        if change_pause:
+            current_time = pygame.time.get_ticks()
+            if current_time - last_score_time >= 3000:  # конструкция которая даёт 25 солнышка раз в 3 секунды
+                board.economica(-1)
+                last_score_time = current_time
+            if current_time - last_score_time >= 3000:  # конструкция которая даёт 25 солнышка раз в 3 секунды
+                board.render_zombie()
+                last_score_time = current_time
 
-        current_time = pygame.time.get_ticks()
-        if current_time - last_score_time >= 3000:  # конструкция которая даёт 25 солнышка раз в 3 секунды
-            board.economica(-1)
-            last_score_time = current_time
-        if current_time - last_score_time >= 3000:  # конструкция которая даёт 25 солнышка раз в 3 секунды
-            board.render_zombie()
-            last_score_time = current_time
-        board.all_sprites_zombie.update()
-        board.all_sprites_plants.update()
-        board.all_sprites_pea.update()
+            board.all_sprites_zombie.update()
+            board.all_sprites_plants.update()
+            board.all_sprites_pea.update()
+
+        # end_screen_sprite.draw(screen)
+        all_sprites_pause_menu.draw(screen)
         pygame.display.flip()
         clock.tick(60)  # счётчик кадрор (fps)
 

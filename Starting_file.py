@@ -1,13 +1,7 @@
 import pygame
-
-from pause_menu import launch_pause_menu
-from pause_menu import Button
-
-from Menu import Button
 from Menu import launch_menu
-from Menu import Options, Background, Button
-from Board import Board
 from Board import main
+from end_screen import launch_end_screen
 
 
 def launch_project():
@@ -27,12 +21,12 @@ def launch_project():
         elif condition == 2:
             condition = main()
         # открытие меню паузы
-        elif condition == 3:
-            print('hello word')
-            condition = launch_pause_menu()
+        # elif condition == 3:
+        #     print('hello word')
+        #     condition = launch_pause_menu()
         # вывод окна проигрыша
         elif condition == 4:
-            pass
+            condition = launch_end_screen()
     pygame.quit()
 
 

@@ -1,6 +1,4 @@
 import pygame
-import os
-import sys
 from load_image import load_image
 
 
@@ -16,40 +14,38 @@ class EndScreen(pygame.sprite.Sprite):
         self.rect.y = y
 
     # воспроизведение звука
-    def sound(self, sound: str):
-        sound = pygame.mixer.Sound(sound)
-        sound.play()
-
-
-def terminate():
-    pygame.quit()
-    sys.exit()
+    def sound_defeat(self):
+        self.sound_menu = pygame.mixer.music
+        self.sound_menu.load('sounds\defeat.wav')
+        self.sound_menu.play()
 
 
 size = width, height = 1900, 800
 screen = pygame.display.set_mode(size)
-screen.fill((0, 0, 0))
 
 end_screen_sprite = pygame.sprite.Group()
 
 # окно конца игры
-pause_menu = EndScreen(0, 0, 'end_screen.png', end_screen_sprite)
+lastScreen = EndScreen(0, 0, 'end_screen.png', end_screen_sprite)
 
 
 def launch_end_screen():
-    # if __name__ == '__main__':
-    pygame.init()
+    screen.fill((0, 0, 0))
 
     running = True
-
+    lastScreen.sound_defeat()
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                pass
+            #     по нажатие в любую часть окна переходишь в главное меню
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                lastScreen.sound_menu.pause()
+                return 1
             end_screen_sprite.draw(screen)
         pygame.display.flip()
     pygame.quit()
 
-# launch_end_screen()
+
+if __name__ == '__main__':
+    launch_end_screen()
