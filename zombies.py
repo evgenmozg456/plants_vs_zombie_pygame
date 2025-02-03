@@ -2,6 +2,7 @@ import pygame
 
 import os
 import sys
+from random import choice
 pygame.init()
 
 
@@ -19,7 +20,7 @@ class Zombie(pygame.sprite.Sprite):
         self.image = load_image('zombie1.png')
         self.rect = self.image.get_rect()
         self.hp = 0  # 😭только хп
-
+        self.speed = choice([1, 1, 1, 1, 1, 2])
 
 class ZombieFirst(Zombie):
     def __init__(self, x, y, *group, plants_group, pea_group):
@@ -33,22 +34,21 @@ class ZombieFirst(Zombie):
         self.stop = False
         self.rect.x = x
         self.rect.y = y
+        self.speed = choice([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2])
         self.hp = 500
 
     def update(self):
-        # if not pygame.sprite.spritecollideany(self, self.plants_group):
         for plant in self.plants_group:
             if pygame.sprite.collide_mask(self, plant):
-                self.stop = True
-            elif not pygame.sprite.collide_mask(self, plant):
-                self.stop = False
+                if plant.rect.y >= self.rect.y:
+                    self.stop = True
         if not self.stop:
-            self.rect.x -= 1
+            self.rect.x -= self.speed
         for pea in self.pea_group:
             if pygame.sprite.collide_mask(self, pea):
                 pygame.sprite.spritecollide(self, self.pea_group, dokill=True)
                 self.hp -= 100
-        if self.hp < 0:
+        if self.hp <= 0:
             self.kill()
 
 
