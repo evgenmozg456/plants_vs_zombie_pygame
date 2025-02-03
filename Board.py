@@ -1,13 +1,12 @@
 import pygame
 from plants import *
 from zombies import *
-import random
+from random import randint
 
 from load_image import load_image
 
 from pause_menu import all_sprites_pause_menu, all_buttons_pause_menu, pause_menu, \
     back_to_game_btn, main_menu_btn, restart_level_btn
-
 
 class Board(pygame.sprite.Sprite):
     # создание поля
@@ -42,7 +41,7 @@ class Board(pygame.sprite.Sprite):
         self.menu = [i for i in range(len(self.sprites_menu))]
 
         self.plants_choice = 0  # показывает какое растение выбрали
-        self.sun = 10000  # начальное кол-во солнышек
+        self.sun = 0  # начальное кол-во солнышек
 
         # значения по умолчанию
         self.left = 350
@@ -226,6 +225,8 @@ def main():
 
     size = 1900, 800
     screen = pygame.display.set_mode(size)
+    len_zombie_group = 0
+    zombie_kills = 0
 
     pygame.mouse.set_visible(True)
 
@@ -299,12 +300,15 @@ def main():
                 board.economica(-1)
                 last_score_time = current_time
             zombie_time = pygame.time.get_ticks()
-            if zombie_time - last_zombie_time >= 30000:  # конструкция которая даёт 25 солнышка раз в 3 секунды
+            if zombie_time - last_zombie_time >= 1000:  # конструкция которая даёт 25 солнышка раз в 3 секунды
                 number_zombies = randint(3, 10)
+                len_zombie_group += number_zombies
                 for _ in range(number_zombies):
                     board.render_zombie()
                 last_zombie_time = zombie_time
-
+            if len_zombie_group > len(board.all_sprites_zombie):
+                zombie_kills = len_zombie_group - len(board.all_sprites_zombie)
+            print(zombie_kills)
             board.all_sprites_zombie.update()
             board.all_sprites_plants.update()
             board.all_sprites_pea.update()
