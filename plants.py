@@ -43,6 +43,7 @@ class Peashooter(Plant):
         self.mask = pygame.mask.from_surface(self.image)
         self.zombie_group = zombie_group
         self.rect.topleft = (x, y)
+        self.hp = 6
 
 
         self.dmg = 50
@@ -93,8 +94,7 @@ class Pea(pygame.sprite.Sprite):
 
 
 class Sunflower(Plant):
-    def __init__(self, x, y, card=False, *group):
-
+    def __init__(self, x, y, card=False, *group, zombie_group, pea_group):
         super().__init__(*group)
         if card:
             self.image = pygame.image.load('cards/podsolnux_card.jpg').convert_alpha()
@@ -150,7 +150,7 @@ class Sun(pygame.sprite.Sprite):
                     self.kill()
 
 class Wallnut(Plant):
-    def __init__(self, x, y, card=False, *group):
+    def __init__(self, x, y, card=False, *group, zombie_group, pea_group):
         super().__init__(*group)
         if card:
             self.image = pygame.image.load('cards/orex_card.jpg').convert_alpha()
@@ -164,6 +164,7 @@ class Wallnut(Plant):
         self.rect.y = y
         self.cd = 50
         self.cost = 50
+        self.hp = 50
     def update(self):
         for zombie in self.zombie_group:
             if pygame.sprite.collide_mask(self, zombie):
@@ -207,7 +208,7 @@ class Cherrybomb(Plant):
 
 
 class Potatomine(Plant):
-    def __init__(self, x, y, card=False, *group):
+    def __init__(self, x, y, card=False, *group, zombie_group, pea_group):
         super().__init__(*group)
         if card:
             self.image = pygame.image.load('cards/potatomine_card.jpg').convert_alpha()
@@ -252,6 +253,7 @@ class Shovel(pygame.sprite.Sprite):
             self.image = pygame.image.load('cards/shovel_card.jpg').convert_alpha()
         else:
             self.image = pygame.image.load('cards/lopata.png').convert_alpha()
+
         self.image = pygame.transform.scale(self.image, (100, 100))
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
