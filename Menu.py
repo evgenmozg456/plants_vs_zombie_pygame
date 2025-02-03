@@ -6,6 +6,7 @@ import os
 import sys
 from load_image import load_image
 
+
 # from Starting_file import launch_project
 
 class Background(pygame.sprite.Sprite):
@@ -107,31 +108,32 @@ option_menu = Options(100, 0, 'options_menu.png')
 options_ok_btn = Button(0, 0, 'option_ok_btn2.png', 'option_ok')
 
 
-
 def test(num):
     back = num
     print(back)
 
 
-    running = True
+running = True
+
 
 def launch_menu():
+    global running
     # убрал проверку вызова
     # if __name__ == '__main__':
-
+    running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
                 # running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-               all_buttons.update(pygame.mouse.get_pos())
+                all_buttons.update(pygame.mouse.get_pos())
 
             all_sprites.draw(screen)
         pygame.display.flip()
+    print(running)
     return 4
     # pygame.quit()
 
-
-xx = launch_menu()
-print(xx)
+# xx = launch_menu()
+# print(xx)
