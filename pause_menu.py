@@ -5,6 +5,8 @@ import os
 import sys
 from load_image import load_image
 
+
+# вывод изображения меню паузы
 class Pause_Menu_bg(pygame.sprite.Sprite):
     def __init__(self, x, y, image, *group):
         super().__init__(*group)
@@ -18,6 +20,7 @@ class Pause_Menu_bg(pygame.sprite.Sprite):
         self.rect.y = y
 
 
+# класс кнопки
 class Button(pygame.sprite.Sprite):
     def __init__(self, x, y, image, con, but_name, *group):
         super().__init__(*group)
@@ -28,15 +31,18 @@ class Button(pygame.sprite.Sprite):
         self.image = load_image('images_pause_menu', image)
         self.image = pygame.transform.scale(self.image, (
             int(width // 1.5), height))
+        # создание масок
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x = x
         self.rect.y = y
 
     def update(self, pos):
+        # проверка клика по кнопке
         pos_in_mask = pos[0] - self.rect.x, pos[1] - self.rect.y
         if self.rect.collidepoint(*pos) and self.mask.get_at(pos_in_mask) and self.con:
             self.sound('sounds\mouse2.wav')
+            # закрытие меню
             if self.but_name == 'back_to_game':
                 print('back_to_game')
                 all_sprites_pause_menu.remove(back_to_game_btn)
@@ -50,15 +56,13 @@ class Button(pygame.sprite.Sprite):
                 all_buttons_pause_menu.remove(pause_menu)
 
                 screen.fill((0, 0, 0))
-                return 1
+                # return 1
+            # рестарт игры
             elif self.but_name == 'restart_level':
                 print('restart_level')
-                # pygame.time.wait(5000)
+            # выход в главное меню
             elif self.but_name == 'main_menu':
                 print('main_menu')
-
-    def kill_sprite(self, name):
-        name.kill()
 
     def sound(self, sound: str):
         sound = pygame.mixer.Sound(sound)
@@ -92,7 +96,7 @@ restart_level_btn = Button(350, 0, 'restart_level_pause_menu.png', True, 'restar
 
 def launch_pause_menu():
     # if __name__ == '__main__':
-    # pygame.init()
+    pygame.init()
 
     running = True
 
