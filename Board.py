@@ -198,6 +198,10 @@ class Board(pygame.sprite.Sprite):
 
 
 def main():
+    sound_menu = pygame.mixer.music
+    sound_menu.load('sounds\zombies_coming.wav')
+    sound_menu.play()
+
     pygame.init()
     clock = pygame.time.Clock()
     pygame.display.set_caption('Игровое поле')
@@ -213,6 +217,10 @@ def main():
     last_score_time = pygame.time.get_ticks()
     board.render_zombie()
     while running:  # самый обычный игровой цикл
+        if not pygame.mixer.music.get_busy():
+            sound_menu.load('sounds/background_game.wav')
+            sound_menu.play()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
