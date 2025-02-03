@@ -6,7 +6,7 @@ from load_image import load_image
 class EndScreen(pygame.sprite.Sprite):
     def __init__(self, x, y, image, *group):
         super().__init__(*group)
-        self.image = load_image('image_end_game', image)
+        self.image = load_image(image)
         self.image = pygame.transform.scale(self.image, (
             width, height))
         self.rect = self.image.get_rect()
@@ -26,7 +26,7 @@ screen = pygame.display.set_mode(size)
 end_screen_sprite = pygame.sprite.Group()
 
 # окно конца игры
-lastScreen = EndScreen(0, 0, 'end_screen.png', end_screen_sprite)
+lastScreen = EndScreen(0, 0, 'image_end_game/end_screen.png', end_screen_sprite)
 
 
 def launch_end_screen():

@@ -1,10 +1,10 @@
-import pygame
 from plants import *
 from zombies import *
 from random import randint
 
-from load_image import load_image
+# from load_image import load_image
 
+# импортируем файлы паузы
 from pause_menu import all_sprites_pause_menu, all_buttons_pause_menu, pause_menu, \
     back_to_game_btn, main_menu_btn, restart_level_btn
 
@@ -131,7 +131,7 @@ class Board(pygame.sprite.Sprite):
 
     def render_zombie(self):
         zombie = ZombieFirst(randint(1900, 2500), choice(self.zombie_y), self.all_sprites_zombie,
-                        plants_group=self.all_sprites_plants, pea_group=self.all_sprites_pea)
+                             plants_group=self.all_sprites_plants, pea_group=self.all_sprites_pea)
 
     def handle_click(self, mouse_pos):
         # print(f"Клик по координатам: {mouse_pos}")
@@ -199,6 +199,7 @@ class Board(pygame.sprite.Sprite):
         return None
 
     def space(self, change_pause):
+        # добавляем спрайты поаузы
         if change_pause:
             all_sprites_pause_menu.add(pause_menu)
             all_sprites_pause_menu.add(back_to_game_btn)
@@ -214,8 +215,6 @@ class Board(pygame.sprite.Sprite):
 
 def main():
     sound_menu = pygame.mixer.music
-    sound_menu.load('sounds\zombies_coming.wav')
-    sound_menu.play()
 
     # удалите инициализацию, она есть в starting_file
     # pygame.init()
@@ -232,7 +231,9 @@ def main():
 
     board = Board(size, 10, 6, pole_image)
     running = True
+    # если change_pause True то игровой процесс идет
     change_pause = True
+    sound_of_start = True
     last_score_time = pygame.time.get_ticks()
     last_zombie_time = pygame.time.get_ticks()
     while running:  # самый обычный игровой цикл
@@ -245,11 +246,10 @@ def main():
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 # event.button == 1 - означает левую кнопку мыши
-                if not change_pause:
-                    all_buttons_pause_menu.update(pygame.mouse.get_pos())
-                else:
+                if change_pause:
                     board.handle_click(event.pos)
-
+                else:
+                    all_buttons_pause_menu.update(pygame.mouse.get_pos())
             if event.type == pygame.KEYDOWN:
                 # пробел вызывает паузу
                 if event.key == pygame.K_SPACE:
@@ -257,43 +257,26 @@ def main():
                 # esc вызывает проигрыш
                 if event.key == pygame.K_ESCAPE:
                     sound_menu.pause()
-                    return 4
+                    return 3
             # если нажали на main menu то возвращаемся обратно в главное меню
             if main_menu_btn.to_main_menu:
                 main_menu_btn.to_main_menu = False
-                all_sprites_pause_menu.remove(pause_menu)
-                all_sprites_pause_menu.remove(back_to_game_btn)
-                all_sprites_pause_menu.remove(main_menu_btn)
-                all_sprites_pause_menu.remove(restart_level_btn)
-
-                all_buttons_pause_menu.remove(back_to_game_btn)
-                all_buttons_pause_menu.remove(main_menu_btn)
-                all_buttons_pause_menu.remove(restart_level_btn)
-                # change_pause = True
-                back_to_game_btn.back_to_game_con = False
+                # back_to_game_btn.back_to_game_con = False
                 sound_menu.pause()
-                return 1
-            # если нажали на back to game то возвращаемся обратно к игре
+                return 1  # открываем главное меню
+            # возвращаемся обратно к игре / закрываем паузу
             if back_to_game_btn.back_to_game_con:
-                all_sprites_pause_menu.remove(pause_menu)
-                all_sprites_pause_menu.remove(back_to_game_btn)
-                all_sprites_pause_menu.remove(main_menu_btn)
-                all_sprites_pause_menu.remove(restart_level_btn)
-
-                all_buttons_pause_menu.remove(back_to_game_btn)
-                all_buttons_pause_menu.remove(main_menu_btn)
-                all_buttons_pause_menu.remove(restart_level_btn)
                 change_pause = True
                 back_to_game_btn.back_to_game_con = False
-
-            # if board.shovel_active:
-            #     pygame.mouse.set_visible(False)
-            # else:
-            #     pygame.mouse.set_visible(True)
+            # рестартим игру
+            if restart_level_btn.restart_game:
+                restart_level_btn.restart_game = False
+                return 2
 
         screen.fill((0, 0, 0))
         board.render(screen)
-        # если вызванно меню паузы, то не обновляем ничего
+        # если вызванно меню паузы(change_pause == False), то не обновляем ничего
+        # если change_pause == True то продолжаем играть
         if change_pause:
             current_time = pygame.time.get_ticks()
             if current_time - last_score_time >= 3000:  # конструкция которая даёт 25 солнышка раз в 3 секунды
@@ -301,6 +284,10 @@ def main():
                 last_score_time = current_time
             zombie_time = pygame.time.get_ticks()
             if zombie_time - last_zombie_time >= 30000:
+                if sound_of_start:
+                    sound_menu.load('sounds\zombies_coming.wav')
+                    sound_menu.play()
+                    sound_of_start = False
                 number_zombies = randint(3, 10)
                 len_zombie_group += number_zombies
                 for _ in range(number_zombies):
@@ -312,7 +299,8 @@ def main():
             board.all_sprites_zombie.update()
             board.all_sprites_plants.update()
             board.all_sprites_pea.update()
-        all_sprites_pause_menu.draw(screen)
+        else:
+            all_sprites_pause_menu.draw(screen)
         pygame.display.flip()
         clock.tick(60)  # счётчик кадрор (fps)
 
