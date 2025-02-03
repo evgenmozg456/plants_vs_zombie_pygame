@@ -18,8 +18,13 @@ class Board(pygame.sprite.Sprite):
 
         self.rect = self.image_pole.get_rect()
 
-        self.all_sprites_plants = pygame.sprite.Group()  # группа спрайтов растений
-        self.menu_sprites = pygame.sprite.Group()  # группа спрайтов менюшки
+        self.zombie_y = [100, 200, 300, 400, 500, 600]
+
+        self.all_sprites_plants = pygame.sprite.Group()
+        self.all_sprites_zombie = pygame.sprite.Group()
+        self.all_sprites_pea = pygame.sprite.Group()
+        self.menu_sprites = pygame.sprite.Group()
+
 
         self.board = [[0] * width for _ in range(height)]
 
@@ -53,7 +58,9 @@ class Board(pygame.sprite.Sprite):
     def _init_menu(self):
         for i in range(len(self.sprites_menu) - 1):
             class_sprite = self.plant_list_class[i]
-            card_plant = class_sprite(self.left + 100 * i, 0, card=True)
+
+            card_plant = class_sprite(self.left + 100 * i, 0, card=True, zombie_group=self.all_sprites_zombie,
+                                      pea_group=self.all_sprites_pea)
             self.menu_sprites.add(card_plant)
         card_plant = Shovel(self.left + 100 * (len(self.sprites_menu) - 1), 0, card=True)
         self.menu_sprites.add(card_plant)
@@ -114,6 +121,13 @@ class Board(pygame.sprite.Sprite):
 
         # Отображаем спрайты
         self.all_sprites_plants.draw(screen)
+        self.all_sprites_zombie.draw(screen)
+        self.all_sprites_pea.draw(screen)
+
+
+    def render_zombie(self, screen):
+        zombie = ZombieFirst(1900, random.choice(self.zombie_y), self.all_sprites_zombie,
+                             plants_group=self.all_sprites_plants, pea_group=self.all_sprites_pea)
 
     def handle_click(self, mouse_pos):
         # print(f"Клик по координатам: {mouse_pos}")
@@ -166,7 +180,7 @@ class Board(pygame.sprite.Sprite):
                         x = self.left + ax * self.cell_size
                         y = self.top + ay * self.cell_size
                         class_plant = self.plant_list_class[self.plants_choice - 1]
-                        plant = class_plant(x, y)
+                        plant = class_plant(x, y, zombie_group=self.all_sprites_zombie, pea_group=self.all_sprites_pea)
                         self.all_sprites_plants.add(plant)
                         self.plants_choice = 0
             return ay, ax
@@ -216,6 +230,9 @@ def main():
         if current_time - last_score_time >= 3000:  # конструкция которая даёт 25 солнышка раз в 3 секунды
             board.economica(-1)
             last_score_time = current_time
+        board.all_sprites_zombie.update()
+        board.all_sprites_plants.update()
+        board.all_sprites_pea.update()
         pygame.display.flip()
         clock.tick(60)  # счётчик кадрор (fps)
 
