@@ -43,19 +43,21 @@ class Peashooter(Plant):
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.zombie_group = zombie_group
-        self.rect.topleft = (x, y)
+        self.rect.x = x
+        self.rect.y = y
         self.hp = 6
-
         self.dmg = 50
         self.cost = 100
         self.speed = 10
+        self.time_collide = 0
 
     def update(self):
         for zombie in self.zombie_group:
             if pygame.sprite.collide_mask(self, zombie):
-                current_time = pygame.time.get_ticks()
-                if current_time - self.last_score_time >= 5000:
+                self.time_collide += 1
+                if self.time_collide >= 100:
                     self.hp -= 1
+                    self.time_collide = 0
         if self.hp <= 0:
             self.kill()
         current_time1 = pygame.time.get_ticks()
@@ -110,17 +112,18 @@ class Sunflower(Plant):
         self.cost = 50
         self.speed = 10
         self.hp = 6
+        self.time_collide = 0
 
     def update(self):
         for zombie in self.zombie_group:
             if pygame.sprite.collide_mask(self, zombie):
-                current_time = pygame.time.get_ticks()
-                if current_time - self.last_score_time >= 5000:
+                self.time_collide += 1
+                if self.time_collide >= 100:
                     self.hp -= 1
         if self.hp <= 0:
             self.kill()
         current_time1 = pygame.time.get_ticks()
-        if current_time1 - self.last_score_time1 >= 1000:
+        if current_time1 - self.last_score_time1 >= 17000:
             self.render_sun()
             self.last_score_time1 = current_time1
 
@@ -165,12 +168,13 @@ class Wallnut(Plant):
         self.cd = 50
         self.cost = 50
         self.hp = 50
+        self.time_collide = 0
 
     def update(self):
         for zombie in self.zombie_group:
             if pygame.sprite.collide_mask(self, zombie):
-                current_time = pygame.time.get_ticks()
-                if current_time - self.last_score_time >= 50000:
+                self.time_collide += 1
+                if self.time_collide >= 1000:
                     self.hp -= 1
         if self.hp <= 0:
             self.kill()
@@ -199,12 +203,12 @@ class Cherrybomb(Plant):
         self.cd = 100
 
     def update(self):
-        current_time = pygame.time.get_ticks()
-        if current_time - self.last_score_time >= 1000:
+        explosion_time = pygame.time.get_ticks()
+        if explosion_time - self.last_score_time >= 1000:
             self.kill()
         if pygame.sprite.spritecollideany(self, self.zombie_group):
             pygame.sprite.spritecollide(self, self.zombie_group, dokill=True)
-            self.last_score_time = current_time
+            self.last_score_time = explosion_time
 
 
 class Potatomine(Plant):
