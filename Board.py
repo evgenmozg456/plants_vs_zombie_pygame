@@ -8,7 +8,6 @@ from random import randint
 from pause_menu import all_sprites_pause_menu, all_buttons_pause_menu, pause_menu, \
     back_to_game_btn, main_menu_btn, restart_level_btn
 
-
 class Board(pygame.sprite.Sprite):
     # создание поля
     def __init__(self, size, width, height, image_path, *groups):
@@ -42,7 +41,7 @@ class Board(pygame.sprite.Sprite):
         self.menu = [i for i in range(len(self.sprites_menu))]
 
         self.plants_choice = 0  # показывает какое растение выбрали
-        self.sun = 10000  # начальное кол-во солнышек
+        self.sun = 0  # начальное кол-во солнышек
 
         # значения по умолчанию
         self.left = 350
@@ -225,6 +224,8 @@ def main():
 
     size = 1900, 800
     screen = pygame.display.set_mode(size)
+    len_zombie_group = 0
+    zombie_kills = 0
 
     pygame.mouse.set_visible(True)
 
@@ -283,17 +284,18 @@ def main():
                 last_score_time = current_time
             zombie_time = pygame.time.get_ticks()
             if zombie_time - last_zombie_time >= 30000:
-                # Вызываем звук атаки зомби один раз
                 if sound_of_start:
                     sound_menu.load('sounds\zombies_coming.wav')
                     sound_menu.play()
-
                     sound_of_start = False
                 number_zombies = randint(3, 10)
+                len_zombie_group += number_zombies
                 for _ in range(number_zombies):
                     board.render_zombie()
                 last_zombie_time = zombie_time
-
+            if len_zombie_group > len(board.all_sprites_zombie):
+                zombie_kills = len_zombie_group - len(board.all_sprites_zombie)
+            print(zombie_kills)
             board.all_sprites_zombie.update()
             board.all_sprites_plants.update()
             board.all_sprites_pea.update()
