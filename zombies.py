@@ -36,7 +36,7 @@ class ZombieFirst(Zombie):
         self.stop = False
         self.rect.x = x
         self.rect.y = y
-        self.speed = choice([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2])
+        self.speed = choice([1, 1, 1, 1, 2, 2])
         self.hp = 500
 
     def update(self):

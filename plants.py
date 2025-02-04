@@ -125,7 +125,7 @@ class Sunflower(Plant):
         if self.hp <= 0:
             self.kill()
         current_time1 = pygame.time.get_ticks()
-        if current_time1 - self.last_score_time1 >= 17000:
+        if current_time1 - self.last_score_time1 >= 15000:
             self.render_sun()
             self.last_score_time1 = current_time1
 
@@ -140,18 +140,17 @@ class Sun(pygame.sprite.Sprite):
         self.last_score_time = pygame.time.get_ticks()
         self.image = pygame.transform.scale(self.image, (90, 90))
         self.rect = self.image.get_rect()
-        self.rect.x = random.randint(x - 140, x - 20)
+        self.rect.x = random.randint(x - 120, x - 10)
         self.rect.y = y
-        self.rect_end = self.rect.y + 20
+        self.rect_end = self.rect.y + 30
+        self.last_score_time = pygame.time.get_ticks()
 
     def update(self):
         if self.rect.y < self.rect_end:
             self.rect.y += 1
-        events = pygame.event.get()
-        for event in events:
-            if event.type == pygame.MOUSEBUTTONUP:
-                if self.rect.collidepoint(event.pos):
-                    self.kill()
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_score_time >= 2000:
+            self.kill()
 
 
 class Wallnut(Plant):
