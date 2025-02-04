@@ -42,8 +42,7 @@ class Board(pygame.sprite.Sprite):
         self.menu = [i for i in range(len(self.sprites_menu))]
 
         self.plants_choice = 0  # показывает какое растение выбрали
-        self.sun = 150 # начальное кол-во солнышек
-
+        self.sun = 150  # начальное кол-во солнышек
         # значения по умолчанию
         self.left = 350
         self.top = 150
