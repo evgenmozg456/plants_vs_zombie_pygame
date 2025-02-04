@@ -1,7 +1,7 @@
 import pygame
 from random import choice
 
-pygame.init()
+# pygame.init()
 
 
 class Zombie(pygame.sprite.Sprite):

@@ -3,7 +3,7 @@ import sys
 import pygame
 
 
-pygame.init()
+# pygame.init()
 
 def load_image(name, colorkey=None):
     fullname = os.path.join(name)

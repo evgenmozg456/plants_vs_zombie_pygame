@@ -2,7 +2,6 @@ import pygame
 
 from Menu import terminate
 from load_image import load_image
-from Board import kill_zombie
 
 
 # окно для изображения проигрыша

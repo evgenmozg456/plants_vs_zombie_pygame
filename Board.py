@@ -1,7 +1,7 @@
 from plants import *
 from zombies import *
 from random import randint
-
+import sys
 # from load_image import load_image
 
 # импортируем файлы паузы
@@ -221,6 +221,9 @@ class Board(pygame.sprite.Sprite):
         for zomb in self.all_sprites_zombie:
             if zomb.rect.x <= 50:
                 return True
+def terminate():
+    pygame.quit()
+    sys.exit()
 
 chet_zombie = 0
 def main():
@@ -259,7 +262,8 @@ def main():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                # running = False
+                terminate()
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 # event.button == 1 - означает левую кнопку мыши
                 if change_pause:
