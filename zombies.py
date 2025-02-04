@@ -3,6 +3,7 @@ import pygame
 import os
 import sys
 from random import choice
+
 pygame.init()
 
 
@@ -22,6 +23,7 @@ class Zombie(pygame.sprite.Sprite):
         self.hp = 0  # 😭только хп
         self.speed = choice([1, 1, 1, 1, 1, 2])
 
+
 class ZombieFirst(Zombie):
     def __init__(self, x, y, *group, plants_group, pea_group):
         super().__init__(*group)
@@ -34,7 +36,7 @@ class ZombieFirst(Zombie):
         self.stop = False
         self.rect.x = x
         self.rect.y = y
-        self.speed = choice([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2])
+        self.speed = choice([1, 1, 1, 1, 2, 2])
         self.hp = 500
 
     def update(self):
@@ -50,6 +52,7 @@ class ZombieFirst(Zombie):
                 self.hp -= 100
         if self.hp <= 0:
             self.kill()
+        # print(zombie_kills)
 
 
 class ZombieSecond(Zombie):

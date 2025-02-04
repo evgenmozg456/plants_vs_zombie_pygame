@@ -2,7 +2,7 @@ from plants import *
 from zombies import *
 from random import randint
 
-from load_image import load_image
+# from load_image import load_image
 
 # импортируем файлы паузы
 from pause_menu import all_sprites_pause_menu, all_buttons_pause_menu, pause_menu, \
@@ -42,7 +42,7 @@ class Board(pygame.sprite.Sprite):
         self.menu = [i for i in range(len(self.sprites_menu))]
 
         self.plants_choice = 0  # показывает какое растение выбрали
-        self.sun = 10000  # начальное кол-во солнышек
+        self.sun = 50  # начальное кол-во солнышек
 
         # значения по умолчанию
         self.left = 350
@@ -81,8 +81,12 @@ class Board(pygame.sprite.Sprite):
         self.cell_size = cell_size
 
     def economica(self, plant=-1):
+        sun_progress = 1
+        for pl in self.all_sprites_plants:
+            if isinstance(pl, Sunflower):
+                sun_progress += 1
         if plant == -1:
-            self.sun += 25
+            self.sun += 25 * sun_progress
         else:
             costs = [0, 50, 100, 25, 50, 150]
             if self.sun >= costs[self.plants_choice]:
@@ -236,6 +240,11 @@ def main():
     sound_of_start = True
     # переменная для воспроизведения звука только в паузе
     sound_pause_active = True
+    len_zombie_group = 0  # первоначальное количество зомби в группе
+    zombie_kills = 0  # количество убитых зомби
+    timer_to_next_wave = 0
+    min_zombies = 2
+    max_zombies = 4
     last_score_time = pygame.time.get_ticks()
     last_zombie_time = pygame.time.get_ticks()
     while running:  # самый обычный игровой цикл
@@ -292,22 +301,31 @@ def main():
         # если change_pause == True то продолжаем играть
         if change_pause:
             current_time = pygame.time.get_ticks()
-            if current_time - last_score_time >= 3000:  # конструкция которая даёт 25 солнышка раз в 3 секунды
+            # конструкция, которая даёт (25 * количество подсолнухов) солнышка раз в 12 секунд
+            if current_time - last_score_time >= 12000:
                 board.economica(-1)
                 last_score_time = current_time
             zombie_time = pygame.time.get_ticks()
             if zombie_time - last_zombie_time >= 30000:
-                # Вызываем звук атаки зомби один раз
                 if sound_of_start:
                     sound_menu.load('sounds\zombies_coming.wav')
                     sound_menu.play()
                     sound_of_start = False
-
-                number_zombies = randint(3, 10)
-                for _ in range(number_zombies):
-                    board.render_zombie()
+                if timer_to_next_wave < 5:
+                    timer_to_next_wave += 1
+                    number_zombies = randint(min_zombies, max_zombies)
+                    len_zombie_group += number_zombies
+                    for _ in range(number_zombies):
+                        board.render_zombie()
+                    if timer_to_next_wave == 5:
+                        sound_menu.load('sounds\zombies_coming.wav')
+                        sound_menu.play()
+                        min_zombies += 4
+                        max_zombies += 6
+                        timer_to_next_wave = 0
                 last_zombie_time = zombie_time
-
+            if len_zombie_group > len(board.all_sprites_zombie):
+                zombie_kills = len_zombie_group - len(board.all_sprites_zombie)
             board.all_sprites_zombie.update()
             board.all_sprites_plants.update()
             board.all_sprites_pea.update()

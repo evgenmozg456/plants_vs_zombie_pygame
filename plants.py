@@ -4,8 +4,10 @@ import os
 import sys
 import random
 
+
 pygame.init()
 
+plant_kill_zombie = 0
 
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
@@ -123,7 +125,7 @@ class Sunflower(Plant):
         if self.hp <= 0:
             self.kill()
         current_time1 = pygame.time.get_ticks()
-        if current_time1 - self.last_score_time1 >= 17000:
+        if current_time1 - self.last_score_time1 >= 15000:
             self.render_sun()
             self.last_score_time1 = current_time1
 
@@ -138,18 +140,17 @@ class Sun(pygame.sprite.Sprite):
         self.last_score_time = pygame.time.get_ticks()
         self.image = pygame.transform.scale(self.image, (90, 90))
         self.rect = self.image.get_rect()
-        self.rect.x = random.randint(x - 140, x - 20)
+        self.rect.x = random.randint(x - 120, x - 10)
         self.rect.y = y
-        self.rect_end = self.rect.y + 20
+        self.rect_end = self.rect.y + 30
+        self.last_score_time = pygame.time.get_ticks()
 
     def update(self):
         if self.rect.y < self.rect_end:
             self.rect.y += 1
-        events = pygame.event.get()
-        for event in events:
-            if event.type == pygame.MOUSEBUTTONUP:
-                if self.rect.collidepoint(event.pos):
-                    self.kill()
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_score_time >= 2000:
+            self.kill()
 
 
 class Wallnut(Plant):
@@ -213,6 +214,7 @@ class Cherrybomb(Plant):
 
 class Potatomine(Plant):
     def __init__(self, x, y, card=False, *group, zombie_group, pea_group):
+        global plant_kill_zombie
         super().__init__(*group)
         if card:
             self.image = pygame.image.load('cards/potatomine_card.jpg').convert_alpha()
@@ -237,7 +239,8 @@ class Potatomine(Plant):
             if pygame.sprite.collide_mask(self, zomb):
                 zomb.kill()
                 if self.active:
-                    pygame.sprite.spritecollide(self, self.zombie_group, True)
+                    if self.rect.y == zomb.rect.y:
+                        pygame.sprite.spritecollide(self, self.zombie_group, True)
                     self.image = pygame.image.load('plants/explosion.png').convert_alpha()
                     self.image = pygame.transform.scale(self.image, self.size)
                     self.active = False
@@ -246,7 +249,6 @@ class Potatomine(Plant):
             if current_time - self.last_score_time >= 1500:
                 self.kill()
                 self.last_score_time = current_time
-
 
 
 class Shovel(pygame.sprite.Sprite):
