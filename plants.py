@@ -151,7 +151,7 @@ class Sun(pygame.sprite.Sprite):
         if self.rect.y < self.rect_end:
             self.rect.y += 1
         live_time = pygame.time.get_ticks()
-        if live_time - self.kill_time >= 2000:
+        if live_time - self.kill_time >= 1000:
             self.kill()
 
 
@@ -174,7 +174,7 @@ class Wallnut(Plant):
         self.time_to_anim = 0
 
     def update(self):
-        if self.time_to_anim >= 5:
+        if self.time_to_anim >= 3:
             if self.frame_n < 10:
                 self.image = (
                     pygame.image.load(f'plants/wallnut_anim/frame_0{self.frame_n}_delay-0.05s.png').convert_alpha())
