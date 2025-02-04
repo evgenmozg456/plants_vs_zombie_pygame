@@ -220,8 +220,8 @@ class Board(pygame.sprite.Sprite):
     # функция проверяет, дошёл ли зомби до дома
     def check_game_end(self):
         for zomb in self.all_sprites_zombie:
-            if zomb.rect.x <= 0:
-                pass
+            if zomb.rect.x <= 50:
+                return True
 
 
 def main():
@@ -277,10 +277,6 @@ def main():
                         sound_pause_active = False
                     change_pause = board.space(change_pause)
 
-                # esc вызывает проигрыш
-                if event.key == pygame.K_ESCAPE:
-                    sound_menu.pause()
-                    return 3
             # если нажали на main menu то возвращаемся обратно в главное меню
             if main_menu_btn.to_main_menu:
                 main_menu_btn.to_main_menu = False
@@ -312,7 +308,7 @@ def main():
                 board.economica(-1)
                 last_score_time = current_time
             zombie_time = pygame.time.get_ticks()
-            if zombie_time - last_zombie_time >= 30000:
+            if zombie_time - last_zombie_time >= 3000:
                 if sound_of_start:
                     sound_menu.load('sounds\zombies_coming.wav')
                     sound_menu.play()
@@ -324,6 +320,7 @@ def main():
                     for _ in range(number_zombies):
                         board.render_zombie()
                     if timer_to_next_wave == 5:
+                        sound_menu.pause()
                         sound_menu.load('sounds\zombies_coming.wav')
                         sound_menu.play()
                         min_zombies += 4
@@ -335,7 +332,9 @@ def main():
             board.all_sprites_zombie.update()
             board.all_sprites_plants.update()
             board.all_sprites_pea.update()
-            board.check_game_end()
+            check_home = board.check_game_end()
+            if check_home:
+                return 3
         else:
             all_sprites_pause_menu.draw(screen)
         pygame.display.flip()
