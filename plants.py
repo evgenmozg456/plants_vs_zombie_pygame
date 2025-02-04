@@ -25,7 +25,8 @@ class Peashooter(Plant):
         if card:
             self.image = pygame.image.load('cards/gorox_card.jpg').convert_alpha()
         else:
-            self.image = pygame.image.load('plants/gorox_1.jpg').convert_alpha()
+            self.image = (
+                pygame.image.load(f'plants/peashooter_anim/frame_00_delay-0.1s.png').convert_alpha())
         self.image = pygame.transform.scale(self.image, self.size)
         self.last_time_to_shoot = pygame.time.get_ticks()
         self.pea_group = pea_group
@@ -36,8 +37,24 @@ class Peashooter(Plant):
         self.rect.y = y
         self.hp = 6
         self.time_collide = 0
+        self.frame_n = 0
+        self.time_to_anim = 0
 
     def update(self):
+        if self.time_to_anim >= 5:
+            if self.frame_n < 10:
+                self.image = (
+                    pygame.image.load(f'plants/peashooter_anim/frame_0{self.frame_n}_delay-0.1s.png').convert_alpha())
+                self.image = pygame.transform.scale(self.image, (100, 100))
+            else:
+                self.image = (
+                    pygame.image.load(f'plants/peashooter_anim/frame_{self.frame_n}_delay-0.1s.png').convert_alpha())
+                self.image = pygame.transform.scale(self.image, (100, 100))
+            self.frame_n += 1
+            if self.frame_n > 23:
+                self.frame_n = 0
+            self.time_to_anim = 0
+        self.time_to_anim += 1
         for zombie in self.zombie_group:
             if pygame.sprite.collide_mask(self, zombie):
                 self.time_collide += 1
@@ -162,25 +179,33 @@ class Cherrybomb(Plant):
             self.rect.x = x
             self.rect.y = y
         else:
-            self.image = pygame.image.load('plants/cherry.png').convert_alpha()
+            self.image = pygame.image.load(f'plants/cherry_anim/frame_00_delay-0.1s.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (300, 300))
             self.rect = self.image.get_rect()
+            self.x = x
+            self.y = y
             self.rect.x = x - 100
             self.rect.y = y - 100
 
         self.zombie_group = zombie_group
         self.last_score_time = pygame.time.get_ticks()
         self.cost = 150
-        self.dmg = 600
-        self.cd = 100
+        self.frame_n = 0
 
     def update(self):
-        explosion_time = pygame.time.get_ticks()
-        if explosion_time - self.last_score_time >= 1000:
+        if self.frame_n < 10:
+            self.image = pygame.image.load(f'plants/cherry_anim/frame_0{self.frame_n}_delay-0.1s.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (300, 300))
+            self.rect.x = self.x - 100
+            self.rect.y = self.y - 100
+        else:
+            self.image = pygame.image.load(f'plants/cherry_anim/frame_{self.frame_n}_delay-0.1s.png').convert_alpha()
+            self.image = pygame.transform.scale(self.image, (300, 300))
+        self.frame_n += 1
+        if self.frame_n > 30:
             self.kill()
         if pygame.sprite.spritecollideany(self, self.zombie_group):
             pygame.sprite.spritecollide(self, self.zombie_group, dokill=True)
-            self.last_score_time = explosion_time
 
 
 class Potatomine(Plant):

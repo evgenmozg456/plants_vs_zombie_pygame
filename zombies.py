@@ -34,7 +34,6 @@ class ZombieFirst(Zombie):
         self.frame_n = 0
 
     def update(self):
-        anim_time = pygame.time.get_ticks()
         if self.frame_n < 10:
             self.image = pygame.image.load(f'zombies/zombie_anim/frame_0{self.frame_n}_delay-0.1s.png').convert_alpha()
             self.image = pygame.transform.scale(self.image, (150, 150))
