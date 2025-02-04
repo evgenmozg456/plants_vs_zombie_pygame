@@ -2,7 +2,7 @@ from plants import *
 from zombies import *
 from random import randint
 
-# from load_image import load_image
+from load_image import load_image
 
 # импортируем файлы паузы
 from pause_menu import all_sprites_pause_menu, all_buttons_pause_menu, pause_menu, \
@@ -232,7 +232,10 @@ def main():
     running = True
     # если change_pause True то игровой процесс идет
     change_pause = True
+    # переменная для воспроизведения звука волны 1 раз
     sound_of_start = True
+    # переменная для воспроизведения звука только в паузе
+    sound_pause_active = True
     last_score_time = pygame.time.get_ticks()
     last_zombie_time = pygame.time.get_ticks()
     while running:  # самый обычный игровой цикл
@@ -252,7 +255,13 @@ def main():
             if event.type == pygame.KEYDOWN:
                 # пробел вызывает паузу
                 if event.key == pygame.K_SPACE:
+                    if sound_pause_active:
+                        sound_menu.pause()
+                        sound_menu.load('sounds\pause_sound.wav')
+                        sound_menu.play(loops=-1)
+                        sound_pause_active = False
                     change_pause = board.space(change_pause)
+
                 # esc вызывает проигрыш
                 if event.key == pygame.K_ESCAPE:
                     sound_menu.pause()
@@ -263,13 +272,18 @@ def main():
                 # back_to_game_btn.back_to_game_con = False
                 sound_menu.pause()
                 return 1  # открываем главное меню
+
             # возвращаемся обратно к игре / закрываем паузу
             if back_to_game_btn.back_to_game_con:
                 change_pause = True
                 back_to_game_btn.back_to_game_con = False
+                sound_pause_active = True
+                sound_menu.pause()
+
             # рестартим игру
             if restart_level_btn.restart_game:
                 restart_level_btn.restart_game = False
+                sound_menu.pause()
                 return 2
 
         screen.fill((0, 0, 0))
@@ -287,8 +301,8 @@ def main():
                 if sound_of_start:
                     sound_menu.load('sounds\zombies_coming.wav')
                     sound_menu.play()
-
                     sound_of_start = False
+
                 number_zombies = randint(3, 10)
                 for _ in range(number_zombies):
                     board.render_zombie()
