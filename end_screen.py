@@ -1,5 +1,8 @@
 import pygame
+
+from Menu import terminate
 from load_image import load_image
+from Board import kill_zombie
 
 
 # окно для изображения проигрыша
@@ -32,6 +35,14 @@ lastScreen = EndScreen(0, 0, 'image_end_game/end_screen.png', end_screen_sprite)
 def launch_end_screen():
     screen.fill((0, 0, 0))
 
+    font = pygame.font.Font(None, 100)
+
+    with open('Score_zombies.txt', 'r') as file:
+        score = file.read()
+
+    num = font.render(f'{score}', True, (100, 255, 100))
+
+
     running = True
     lastScreen.sound_defeat()
     while running:
@@ -43,8 +54,10 @@ def launch_end_screen():
                 lastScreen.sound_menu.pause()
                 return 1
             end_screen_sprite.draw(screen)
+            screen.blit(num, (1000, 700))
         pygame.display.flip()
     pygame.quit()
+
 
 
 if __name__ == '__main__':

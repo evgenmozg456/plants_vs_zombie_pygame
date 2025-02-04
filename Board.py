@@ -42,7 +42,7 @@ class Board(pygame.sprite.Sprite):
         self.menu = [i for i in range(len(self.sprites_menu))]
 
         self.plants_choice = 0  # показывает какое растение выбрали
-        self.sun = 100  # начальное кол-во солнышек
+        self.sun = 150 # начальное кол-во солнышек
 
         # значения по умолчанию
         self.left = 350
@@ -197,7 +197,7 @@ class Board(pygame.sprite.Sprite):
 
         if 0 <= ax < len(self.sprites_menu) - 1 and 0 <= my < self.cell_size:
             current_time = pygame.time.get_ticks()
-            if current_time - self.cooldown[ax + 1] >= self.cooldown_time:  # Проверяем перезарядку
+            if current_time - self.cooldown[ax + 1] >= self.cooldown_time:    # Проверяем перезарядку
                 self.plants_choice = ax + 1
                 self.cooldown[ax + 1] = current_time  # Записываем время выбора
             return ax
@@ -223,7 +223,7 @@ class Board(pygame.sprite.Sprite):
             if zomb.rect.x <= 50:
                 return True
 
-
+chet_zombie = 0
 def main():
     sound_menu = pygame.mixer.music
 
@@ -304,7 +304,7 @@ def main():
         if change_pause:
             current_time = pygame.time.get_ticks()
             # конструкция, которая даёт (25 * количество подсолнухов) солнышка раз в 12 секунд
-            if current_time - last_score_time >= 12000:
+            if current_time - last_score_time >= 10000:
                 board.economica(-1)
                 last_score_time = current_time
             zombie_time = pygame.time.get_ticks()
@@ -327,18 +327,25 @@ def main():
                         max_zombies += 6
                         timer_to_next_wave = 0
                 last_zombie_time = zombie_time
+            global chet_zombie
             if len_zombie_group > len(board.all_sprites_zombie):
-                zombie_kills = len_zombie_group - len(board.all_sprites_zombie)
+                chet_zombie = len_zombie_group - len(board.all_sprites_zombie)
             board.all_sprites_zombie.update()
             board.all_sprites_plants.update()
             board.all_sprites_pea.update()
             check_home = board.check_game_end()
             if check_home:
+                kill_zombie()
                 return 3
         else:
             all_sprites_pause_menu.draw(screen)
         pygame.display.flip()
         clock.tick(60)  # счётчик кадрор (fps)
+
+def kill_zombie():
+    with open('Score_zombies.txt', 'w') as file:
+        file.write(f'{chet_zombie}')
+        file.close()
 
 
 if __name__ == '__main__':
