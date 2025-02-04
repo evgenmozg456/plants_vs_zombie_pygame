@@ -42,7 +42,7 @@ class Board(pygame.sprite.Sprite):
         self.menu = [i for i in range(len(self.sprites_menu))]
 
         self.plants_choice = 0  # показывает какое растение выбрали
-        self.sun = 100  # начальное кол-во солнышек
+        self.sun = 150  # начальное кол-во солнышек
 
         # значения по умолчанию
         self.left = 350
@@ -304,7 +304,7 @@ def main():
         if change_pause:
             current_time = pygame.time.get_ticks()
             # конструкция, которая даёт (25 * количество подсолнухов) солнышка раз в 12 секунд
-            if current_time - last_score_time >= 12000:
+            if current_time - last_score_time >= 10000:
                 board.economica(-1)
                 last_score_time = current_time
             zombie_time = pygame.time.get_ticks()

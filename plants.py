@@ -1,12 +1,6 @@
 import pygame
 
-import os
-import sys
 import random
-
-pygame.init()
-
-plant_kill_zombie = 0
 
 
 class Plant(pygame.sprite.Sprite):
@@ -95,7 +89,8 @@ class Sunflower(Plant):
         if card:
             self.image = pygame.image.load('cards/podsolnux_card.jpg').convert_alpha()
         else:
-            self.image = pygame.image.load('plants/sunflower.png').convert_alpha()
+            self.image = (
+                pygame.image.load(f'plants/sunflower_anim/frame_00_delay-0.03s.png').convert_alpha())
         self.pea_group = pea_group
         self.image = pygame.transform.scale(self.image, self.size)
         self.time_to_spawn_sun = pygame.time.get_ticks()
@@ -105,8 +100,24 @@ class Sunflower(Plant):
         self.rect.y = y
         self.hp = 6
         self.time_collide = 0
+        self.frame_n = 0
+        self.time_to_anim = 0
 
     def update(self):
+        if self.time_to_anim >= 2:
+            if self.frame_n < 10:
+                self.image = (
+                    pygame.image.load(f'plants/sunflower_anim/frame_0{self.frame_n}_delay-0.03s.png').convert_alpha())
+                self.image = pygame.transform.scale(self.image, (100, 100))
+            else:
+                self.image = (
+                    pygame.image.load(f'plants/sunflower_anim/frame_{self.frame_n}_delay-0.03s.png').convert_alpha())
+                self.image = pygame.transform.scale(self.image, (100, 100))
+            self.frame_n += 1
+            if self.frame_n > 54:
+                self.frame_n = 0
+            self.time_to_anim = 0
+        self.time_to_anim += 1
         for zombie in self.zombie_group:
             if pygame.sprite.collide_mask(self, zombie):
                 self.time_collide += 1
@@ -150,7 +161,8 @@ class Wallnut(Plant):
         if card:
             self.image = pygame.image.load('cards/orex_card.jpg').convert_alpha()
         else:
-            self.image = pygame.image.load('plants/orex.png').convert_alpha()
+            self.image = (
+                pygame.image.load(f'plants/wallnut_anim/frame_00_delay-0.05s.png').convert_alpha())
         self.image = pygame.transform.scale(self.image, self.size)
         self.rect = self.image.get_rect()
         self.zombie_group = zombie_group
@@ -158,8 +170,24 @@ class Wallnut(Plant):
         self.rect.y = y
         self.hp = 50
         self.time_collide = 0
+        self.frame_n = 0
+        self.time_to_anim = 0
 
     def update(self):
+        if self.time_to_anim >= 5:
+            if self.frame_n < 10:
+                self.image = (
+                    pygame.image.load(f'plants/wallnut_anim/frame_0{self.frame_n}_delay-0.05s.png').convert_alpha())
+                self.image = pygame.transform.scale(self.image, (100, 100))
+            else:
+                self.image = (
+                    pygame.image.load(f'plants/wallnut_anim/frame_{self.frame_n}_delay-0.05s.png').convert_alpha())
+                self.image = pygame.transform.scale(self.image, (100, 100))
+            self.frame_n += 1
+            if self.frame_n > 43:
+                self.frame_n = 0
+            self.time_to_anim = 0
+        self.time_to_anim += 1
         for zombie in self.zombie_group:
             if pygame.sprite.collide_mask(self, zombie):
                 self.time_collide += 1
@@ -221,8 +249,6 @@ class Potatomine(Plant):
         self.last_score_time = pygame.time.get_ticks()
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
-        self.x = x
-        self.y = y
         self.rect.x = x
         self.rect.y = y
         self.cost = 25

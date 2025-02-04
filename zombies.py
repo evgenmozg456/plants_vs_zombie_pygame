@@ -1,7 +1,4 @@
 import pygame
-
-import os
-import sys
 from random import choice
 
 pygame.init()
@@ -12,8 +9,8 @@ class Zombie(pygame.sprite.Sprite):
         super().__init__(*group)
         self.image = pygame.image.load('zombies/zombie1.png').convert_alpha()
         self.rect = self.image.get_rect()
-        self.hp = 0  # 😭только хп
-        self.speed = choice([1, 1, 1, 1, 1, 2])
+        self.hp = 0  # только хп
+        self.speed = choice([1, 1, 1, 1, 1, 2])  # скорость зомби в отношении 5:1
 
 
 class ZombieFirst(Zombie):
@@ -55,4 +52,3 @@ class ZombieFirst(Zombie):
                 self.hp -= 100
         if self.hp <= 0:
             self.kill()
-        # print(zombie_kills)
