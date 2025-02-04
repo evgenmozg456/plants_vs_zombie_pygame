@@ -308,7 +308,7 @@ def main():
                 board.economica(-1)
                 last_score_time = current_time
             zombie_time = pygame.time.get_ticks()
-            if zombie_time - last_zombie_time >= 3000:
+            if zombie_time - last_zombie_time >= 30000:
                 if sound_of_start:
                     sound_menu.load('sounds\zombies_coming.wav')
                     sound_menu.play()
