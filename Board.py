@@ -28,10 +28,10 @@ class Board(pygame.sprite.Sprite):
 
         self.zombie_y = [100, 200, 300, 400, 500, 600]
 
-        self.all_sprites_plants = pygame.sprite.Group()
-        self.all_sprites_zombie = pygame.sprite.Group()
-        self.all_sprites_pea = pygame.sprite.Group()
-        self.menu_sprites = pygame.sprite.Group()
+        self.all_sprites_plants = pygame.sprite.Group()  # группа растений
+        self.all_sprites_zombie = pygame.sprite.Group()  # группа растений
+        self.all_sprites_pea = pygame.sprite.Group()  # группа снарядов(солнышки, горох)
+        self.menu_sprites = pygame.sprite.Group()  # группа спрайтов меню
 
         self.board = [[0] * width for _ in range(height)]
 
@@ -204,7 +204,7 @@ class Board(pygame.sprite.Sprite):
         return None
 
     def space(self, change_pause):
-        # добавляем спрайты поаузы
+        # добавляем спрайты паузы
         if change_pause:
             all_sprites_pause_menu.add(pause_menu)
             all_sprites_pause_menu.add(back_to_game_btn)
@@ -216,6 +216,12 @@ class Board(pygame.sprite.Sprite):
             all_buttons_pause_menu.add(restart_level_btn)
             change_pause = False
             return change_pause
+
+    # функция проверяет, дошёл ли зомби до дома
+    def check_game_end(self):
+        for zomb in self.all_sprites_zombie:
+            if zomb.rect.x <= 0:
+                pass
 
 
 def main():
@@ -329,6 +335,7 @@ def main():
             board.all_sprites_zombie.update()
             board.all_sprites_plants.update()
             board.all_sprites_pea.update()
+            board.check_game_end()
         else:
             all_sprites_pause_menu.draw(screen)
         pygame.display.flip()

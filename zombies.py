@@ -7,18 +7,10 @@ from random import choice
 pygame.init()
 
 
-def load_image(name, colorkey=None):
-    fullname = os.path.join('zombies', name)
-    if not os.path.isfile(fullname):
-        sys.exit()
-    image = pygame.image.load(fullname)
-    return image
-
-
 class Zombie(pygame.sprite.Sprite):
     def __init__(self, *group):
         super().__init__(*group)
-        self.image = load_image('zombie1.png')
+        self.image = pygame.image.load('zombies/zombie1.png').convert_alpha()
         self.rect = self.image.get_rect()
         self.hp = 0  # 😭только хп
         self.speed = choice([1, 1, 1, 1, 1, 2])
@@ -27,7 +19,7 @@ class Zombie(pygame.sprite.Sprite):
 class ZombieFirst(Zombie):
     def __init__(self, x, y, *group, plants_group, pea_group):
         super().__init__(*group)
-        self.image = load_image('zombie1.png')
+        self.image = pygame.image.load('zombies/zombie1.png').convert_alpha()
         self.plants_group = plants_group
         self.pea_group = pea_group
         self.image = pygame.transform.scale(self.image, (150, 150))
@@ -53,15 +45,3 @@ class ZombieFirst(Zombie):
         if self.hp <= 0:
             self.kill()
         # print(zombie_kills)
-
-
-class ZombieSecond(Zombie):
-    def __init__(self, *group):
-        super().__init__(*group)
-        self.hp = 1000
-
-
-class ZombieThird(Zombie):
-    def __init__(self, *group):
-        super().__init__(*group)
-        self.hp = 2000

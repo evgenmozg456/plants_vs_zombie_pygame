@@ -4,26 +4,15 @@ import os
 import sys
 import random
 
-
 pygame.init()
 
 plant_kill_zombie = 0
-
-def load_image(name, colorkey=None):
-    fullname = os.path.join('data', name)
-    if not os.path.isfile(fullname):
-        sys.exit()
-    image = pygame.image.load(fullname)
-    return image
 
 
 class Plant(pygame.sprite.Sprite):
     def __init__(self, *group):
         super().__init__(*group)
-        self.cost = 0  # стоимость
-        self.dmg = 0  # урон
-        self.cd = 20  # перезарядка для выставления на поле
-        self.speed = 0  # скорость действия (стрельба/выдача солнц)
+        self.hp = 6  # количество укусов для съедения
         self.size = 100, 100  # размер
 
     def update(self):
@@ -38,9 +27,7 @@ class Peashooter(Plant):
         else:
             self.image = pygame.image.load('plants/gorox_1.jpg').convert_alpha()
         self.image = pygame.transform.scale(self.image, self.size)
-        self.last_score_time = pygame.time.get_ticks()
-        self.last_score_time1 = pygame.time.get_ticks()
-        self.group = group
+        self.last_time_to_shoot = pygame.time.get_ticks()
         self.pea_group = pea_group
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
@@ -48,9 +35,6 @@ class Peashooter(Plant):
         self.rect.x = x
         self.rect.y = y
         self.hp = 6
-        self.dmg = 50
-        self.cost = 100
-        self.speed = 10
         self.time_collide = 0
 
     def update(self):
@@ -62,16 +46,14 @@ class Peashooter(Plant):
                     self.time_collide = 0
         if self.hp <= 0:
             self.kill()
-        current_time1 = pygame.time.get_ticks()
-        if current_time1 - self.last_score_time1 >= 2000:
+        time_to_shoot = pygame.time.get_ticks()
+        if time_to_shoot - self.last_time_to_shoot >= 2000:
             self.render_pea()
-            self.last_score_time1 = current_time1
+            self.last_time_to_shoot = time_to_shoot
 
+    # функция создаёт пулю-горошину
     def render_pea(self):
         pea = Pea(self.rect.x + self.size[0], self.rect.y, self.zombie_group, self.pea_group)
-
-    def cost_plant(self):
-        return self.cost
 
 
 class Pea(pygame.sprite.Sprite):
@@ -88,12 +70,6 @@ class Pea(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.x += 10
-        # for zombie in self.zombie_group:
-        #     if pygame.sprite.collide_mask(self, zombie):
-        #         self.kill()
-        # current_time = pygame.time.get_ticks()
-        # if pygame.sprite.spritecollideany(self, self.zombie_group):
-        #     if current_time - self.last_score_time >= 1000:
 
 
 class Sunflower(Plant):
@@ -105,14 +81,11 @@ class Sunflower(Plant):
             self.image = pygame.image.load('plants/sunflower.png').convert_alpha()
         self.pea_group = pea_group
         self.image = pygame.transform.scale(self.image, self.size)
-        self.last_score_time = pygame.time.get_ticks()
-        self.last_score_time1 = pygame.time.get_ticks()
+        self.time_to_spawn_sun = pygame.time.get_ticks()
         self.zombie_group = zombie_group
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.cost = 50
-        self.speed = 10
         self.hp = 6
         self.time_collide = 0
 
@@ -124,11 +97,12 @@ class Sunflower(Plant):
                     self.hp -= 1
         if self.hp <= 0:
             self.kill()
-        current_time1 = pygame.time.get_ticks()
-        if current_time1 - self.last_score_time1 >= 15000:
+        time_to_spawn_sun = pygame.time.get_ticks()
+        if time_to_spawn_sun - self.time_to_spawn_sun >= 15000:
             self.render_sun()
-            self.last_score_time1 = current_time1
+            self.time_to_spawn_sun = time_to_spawn_sun
 
+    # функция создаёт солнышко
     def render_sun(self):
         sun = Sun(self.rect.x + self.size[0], self.rect.y, self.pea_group)
 
@@ -137,19 +111,19 @@ class Sun(pygame.sprite.Sprite):
     def __init__(self, x, y, *group):
         super().__init__(*group)
         self.image = pygame.image.load('plants/sun.png').convert_alpha()
-        self.last_score_time = pygame.time.get_ticks()
+        self.kill_time = pygame.time.get_ticks()
         self.image = pygame.transform.scale(self.image, (90, 90))
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(x - 120, x - 10)
         self.rect.y = y
         self.rect_end = self.rect.y + 30
-        self.last_score_time = pygame.time.get_ticks()
+        self.kill_time = pygame.time.get_ticks()
 
     def update(self):
         if self.rect.y < self.rect_end:
             self.rect.y += 1
-        current_time = pygame.time.get_ticks()
-        if current_time - self.last_score_time >= 2000:
+        live_time = pygame.time.get_ticks()
+        if live_time - self.kill_time >= 2000:
             self.kill()
 
 
@@ -162,12 +136,9 @@ class Wallnut(Plant):
             self.image = pygame.image.load('plants/orex.png').convert_alpha()
         self.image = pygame.transform.scale(self.image, self.size)
         self.rect = self.image.get_rect()
-        self.last_score_time = pygame.time.get_ticks()
         self.zombie_group = zombie_group
         self.rect.x = x
         self.rect.y = y
-        self.cd = 50
-        self.cost = 50
         self.hp = 50
         self.time_collide = 0
 
